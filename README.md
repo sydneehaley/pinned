@@ -4,7 +4,7 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 ## Author
 
-Sydnee Haley
+Sydnee Haley (https://sydneehaley.com)
 
 ### About
 

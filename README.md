@@ -4,22 +4,22 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 ## Author
 
-Sydnee Haley (https://sydneehaley.com)
+Sydnee Haley (http://sydneehaley.com)
 
 ### About
 
 This is a Pinterest inspired pinned images gallery for exploring ideas. Not exactly a clone of pinterest, but my
-vision of "pinterest" which focuses on a redesign and update of the current frontend of Pinterest. This is a full stack web app using React.js, React ReduxToolkit, Google Firebase (backend), and Tailwind CSS.
+vision of "pinterest" which focuses on a redesign and update of the current frontend of Pinterest. This is a full stack web application using React.js, React ReduxToolkit, Google Firebase (backend), and Tailwind CSS.
 
 ### Demo
 
-View demo at: pinned-images-gallery.netlify.app
+View demo at: (http://pinned-images-gallery.netlify.app)
 
 ### Progress - 80%
 
 Current repo includes 90% of app's features. Currently testing features with Cypress. Completing UI design.
 
-### Features
+### Current Features
 
 -CRUD
 -Authentication/user account

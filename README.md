@@ -17,7 +17,7 @@ View demo at: (http://pinned-images-gallery.netlify.app)
 
 ### Progress - 80%
 
-Current repo includes 90% of app's features. Currently testing features with Cypress. Completing UI design.
+Current repo includes 90% of app's features. Currently testing features with Cypress. Completing UI kit in Adobe XD.
 
 ### Current Features
 

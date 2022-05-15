@@ -14,6 +14,8 @@ const initialState = {
   toggleSettings: false,
   searchParams: '',
   boardSelection: '',
+  backgroundLocation: [],
+  searchActive: false,
 };
 
 export const signUpUser = createAsyncThunk('pingallery/signupUser', async (createUser) => {
@@ -107,6 +109,12 @@ export const appState = createSlice({
     getBoardSelection: (state, action) => {
       state.boardSelection = action.payload;
     },
+    getBackground: (state, action) => {
+      state.backgroundLocation = action.payload;
+    },
+    setSearchActive: (state, action) => {
+      state.searchActive = action.payload;
+    },
   },
   extraReducers: {
     [signUpUser.pending]: (state, action) => {
@@ -160,6 +168,8 @@ export const {
   toggleSettingsSections,
   getSearchParams,
   getBoardSelection,
+  getBackground,
+  setSearchActive,
 } = appState.actions;
 
 export default appState.reducer;

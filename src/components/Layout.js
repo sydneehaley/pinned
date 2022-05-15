@@ -63,16 +63,11 @@ const Layout = () => {
       ) : (
         <div>
           <Navbar />
-          <div
-            class={`w-full  h-[89vh] flex flex-col items-center overflow-scroll ${
-              location.pathname.includes('/create') ? 'bg-inputGray' : location.pathname.includes('/edit') ? 'bg-inputGray' : 'bg-white'
-            }`}
-          >
-            {' '}
+          <div class={`w-full  h-full flex flex-col items-center overflow-scroll `}>
             <Outlet />
           </div>
-          <FooterNavbar openModal={openModal} />
 
+          <FooterNavbar openModal={openModal} />
           <Modal isOpen={toggleModal} closeModal={closeModal} openModal={openModal} title={'Create Board'}>
             <CreateBoard landing={'/'} />
           </Modal>

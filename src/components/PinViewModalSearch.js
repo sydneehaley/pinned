@@ -15,9 +15,9 @@ import ChevronLeftIcon from './UI/Icons/ChevronLeftIcon';
 import ChevronRightIcon from './UI/Icons/ChevronRightIcon';
 import DropDownMenu from './UI/DropdownMenu';
 
-export default function PinViewModal({ classes }) {
+export default function PinViewModalSearch({ classes }) {
   const getQuery = useSelector((state) => state.pingallery.searchParams);
-  const { user, pins, users, userFollowing } = useAuthState();
+  const { user, pins, users, userFollowing, currSearch } = useAuthState();
   const { id } = useParams();
   console.log(id);
   let navigate = useNavigate();
@@ -31,7 +31,8 @@ export default function PinViewModal({ classes }) {
   const [pinAuthor, setPinAuthor] = useState();
   const [authorFollowersCount, setAuthorFollowersCount] = useState(false);
   const [isFollowing, setIsFollowing] = useState(false);
-
+  const storedSearch = currSearch;
+  console.log(storedSearch);
   const [prevPin, setPrevPin] = useState({
     title: '',
     description: '',
@@ -67,7 +68,7 @@ export default function PinViewModal({ classes }) {
   }, []);
 
   function onDismiss() {
-    navigate(`/`);
+    navigate(`/search?content=${currSearch}`);
   }
 
   const closeModal = () => {
@@ -166,9 +167,9 @@ export default function PinViewModal({ classes }) {
                 {currIndex > 0 && (
                   <div class='flex items-center justify-center h-[70vh] w-[5%] '>
                     <Link
-                      to={`/view/pin/${currIndex === 0 ? `${pins[currIndex + 0]?.id}` : `${pins[currIndex - 1]?.id}`}`}
+                      to={`/search/view/pin/${currIndex === 0 ? `${pins[currIndex + 0]?.id}` : `${pins[currIndex - 1]?.id}`}`}
                       style={{ cursor: 'pointer' }}
-                      state={{ background: { ...location, pathname: '/' } }}
+                      state={{ background: { ...location, pathname: '/search', search: `?content=${storedSearch}` } }}
                     >
                       <ChevronLeftIcon classes={'w-8 h-8 drop-shadow-md'} stroke={'white'} />
                     </Link>
@@ -321,9 +322,9 @@ export default function PinViewModal({ classes }) {
                 {currIndex < pins?.length - 1 && (
                   <div class='flex items-center justify-center h-[70vh] w-[5%] '>
                     <Link
-                      to={`/view/pin/${currIndex === pins.length - 1 ? `${pins[currIndex + 0]?.id}` : `${pins[currIndex + 1]?.id}`}`}
+                      to={`/search/view/pin/${currIndex === pins.length - 1 ? `${pins[currIndex + 0]?.id}` : `${pins[currIndex + 1]?.id}`}`}
                       style={{ cursor: 'pointer' }}
-                      state={{ background: { ...location, pathname: '/' } }}
+                      state={{ background: { ...location, pathname: '/search', search: `?content=${storedSearch}` } }}
                     >
                       <ChevronRightIcon classes={'w-8 h-8 drop-shadow-md'} stroke={'white'} />
                     </Link>

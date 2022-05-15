@@ -11,7 +11,6 @@ import CreatePin from './components/CreatePin';
 import CreateBoard from './components/CreateBoard';
 import EditBoard from './components/EditBoard';
 import PinView from './components/PinView';
-import PinViewModalSearch from './components/PinViewModalSearch';
 import PinViewModal from './components/PinViewModal';
 import EditPin from './components/EditPin';
 import DeletePin from './components/DeletePin';
@@ -85,17 +84,7 @@ const App = () => {
           />
           <Route
             exact
-            path='/view/pin/:id'
-            element={
-              <ProtectedRoute>
-                <PinView />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            exact
-            path='/search/view/pin/:id'
+            path='view/pin/:id'
             element={
               <ProtectedRoute>
                 <PinView />
@@ -182,12 +171,6 @@ const App = () => {
 
       {background && (
         <Routes>
-          <Route path='/search/view/pin/:id' element={<PinViewModalSearch />} />
-        </Routes>
-      )}
-
-      {background && (
-        <Routes>
           <Route path='/view/pin/:id' element={<PinViewModal />} />
         </Routes>
       )}
@@ -195,4 +178,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default AppAlt;

@@ -51,6 +51,7 @@ export const AuthContextProvider = (props) => {
   const [userFollowers, setUserFollowers] = useState();
   const [userFollowing, setUserFollowing] = useState();
   const [userSearches, setUserSearches] = useState();
+  const [currSearch, setCurrSearch] = useState();
 
   useEffect(() => {
     setLoading(true);
@@ -74,6 +75,7 @@ export const AuthContextProvider = (props) => {
 
       const userSavedContentRef = collection(db, 'public_users', `${res?.uid}`, 'saved_pins');
       const userSearchedContentRef = collection(db, 'public_users', `${res?.uid}`, 'searches');
+      const userCurrSearchRef = collection(db, 'public_users', `${res?.uid}`, 'currSearchQuery');
 
       const q_user = query(usersCollectionRef, where('uid', '==', `${res?.uid}`));
       const q_user_boards = query(contentCollectionRef, where('author', '==', `${res?.uid}`), where('type', '==', 'board'));
@@ -88,6 +90,7 @@ export const AuthContextProvider = (props) => {
       const q_pins = query(contentCollectionRef, where('type', '==', 'pin'));
       const q_boards = query(contentCollectionRef, where('type', '==', 'board'));
       const q_searches = query(userSearchedContentRef, where('type', '==', 'search'));
+      const q_currsearch = query(userCurrSearchRef, where('type', '==', 'currSearch'));
 
       /* Users & Profiles */
 
@@ -179,6 +182,15 @@ export const AuthContextProvider = (props) => {
         setUserSearches(user_searches);
       });
 
+      onSnapshot(q_currsearch, (querySnapshot) => {
+        const user_currsearch = [];
+        querySnapshot.docs.forEach((doc) => {
+          user_currsearch.push(doc.data());
+        });
+        console.log(user_currsearch);
+        setCurrSearch(user_currsearch[0]?.query?.toString());
+      });
+
       /* Global Content */
 
       onSnapshot(q_pins, (querySnapshot) => {
@@ -213,6 +225,7 @@ export const AuthContextProvider = (props) => {
         users,
         userSavedPins,
         userSearches,
+        currSearch,
       }}
       {...props}
     />

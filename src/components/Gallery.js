@@ -4,7 +4,7 @@ import { Link, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { db, useAuthState } from '../firebase/config';
 import Modal from './UI/Modal';
-import { toggleDeletePinModal } from '../store/features/appState';
+import { getBackground, setSearchActive } from '../store/features/appState';
 import Marquee from 'react-fast-marquee';
 import { css } from '@emotion/react';
 import HashLoader from 'react-spinners/HashLoader';
@@ -19,8 +19,11 @@ import TrendingIcon from './UI/Icons/TrendingIcon';
 import AddSolidIcon from './UI/Icons/AddSolidIcon';
 import SendIcon from './UI/Icons/SendIcon';
 import MoreIcon from './UI/Icons/MoreIcon';
+
 const PinCard = (props) => {
-  let location = useLocation();
+  const location = useLocation();
+  console.log(location);
+  const dispatch = useDispatch();
   const [hover, setHover] = useState(false);
   const { users, pins, user } = useAuthState();
   const [toggleModal, setToggleModal] = useState(false);
@@ -29,9 +32,7 @@ const PinCard = (props) => {
   const pinContainer = useRef();
 
   useEffect(() => {
-    if (imageRef != null) {
-      console.log(`${imageRef.current.height + 'px'}`);
-    }
+    dispatch(getBackground({ pathname: location.pathname, search: location.search }));
   }, []);
 
   const handleImageHover = () => {
@@ -68,12 +69,6 @@ const PinCard = (props) => {
           <div>
             <div class='absolute z-20 w-[4.5rem] flex h-[2rem] left-[80%] h-[4rem]  px-[15px]'>
               <div class='flex flex-col py-[1rem] z-20 pr-[1rem]'>
-                {/* <button onClick={openModal} class=' rounded-sm flex items-center justify-center h-[32px] px-[11px] mr-[5px]'>
-                  <HeartOutlineIcon stroke={'white'} classes={'w-6 h-6 mr-[3px]'} />
-                </button> */}
-                {/* <button onClick={openModal} class='bg-gray-900/50 rounded-full flex items-center justify-center w-[25px] h-[25px] px-[11px]'>
-                  <AddIcon fill={'white'} classes={'w-7 h-7'} />
-                </button> */}
                 <button onClick={openModal} class='bg-gray-900/50 rounded-full p-[0.2rem]'>
                   {' '}
                   <AddIcon fill={'white'} classes={'w-4 h-4'} />
@@ -100,7 +95,7 @@ const PinCard = (props) => {
             <div class='w-full flex items-center'>
               <div class='flex  items-center w-[75%]'>
                 <img class='w-[20px] h-[20px] rounded-full' src={users?.filter((usr) => usr.uid === props.pin.author)[0].photoURL} />
-                <p class='font-[700] text-[14px] ml-[7px] tracking-normal'>{props?.pin?.title}</p>
+                <p class='font-[500] text-[14px] ml-[7px] tracking-normal'>{props?.pin?.title}</p>
               </div>
               {/* <div class='w-[24%] flex items-center justify-between'>
                 <span class='flex items-center font-bold text-[12px]'>
@@ -136,7 +131,7 @@ const PinList = (props) => {
 };
 
 const PinBoard = () => {
-  const { pins, userFollowing, user } = useAuthState();
+  const { pins, userFollowing, user, currSearch } = useAuthState();
   const [followingPins, setFollowingPins] = useState();
 
   useEffect(() => {
@@ -152,7 +147,7 @@ const PinBoard = () => {
 
   return (
     <Fragment>
-      {/* <TrendingTags /> */}
+      <TrendingTags />
       {filtered_pins?.length === 0 ? (
         <div class='flex w-full items-center justify-center h-full'>
           <div class='flex w-[90%] items-center justify-center h-[89vh]'>
@@ -165,6 +160,32 @@ const PinBoard = () => {
         </Fragment>
       )}
     </Fragment>
+  );
+};
+
+const TrendingTags = () => {
+  const data = ['Fashion', 'Art', 'Design', 'Film', 'Photography', 'Makeup', 'Beauty', 'News', 'Nail Art', 'Spiritual'];
+  return (
+    <div class='flex w-full h-20 flex items-center '>
+      <div class='flex w-[7rem] border-r-[1px] border-slate-200 items-center'>
+        <div>
+          <h2 class='font-[600] text-xl  pr-[10px]'>Trending</h2>
+        </div>
+        {/* <div>
+          <TrendingIcon classes={'w-5 h-5'} />
+        </div> */}
+      </div>
+
+      <div class='w-[89%] pl-[10px]'>
+        <Marquee>
+          {data.map((tag, i) => (
+            <div key={i} class='w-[10%] flex items-center justify-center'>
+              <h3 class=' text-lg text-neutral-600 font-[600]'>{tag}</h3>
+            </div>
+          ))}
+        </Marquee>
+      </div>
+    </div>
   );
 };
 
@@ -185,32 +206,6 @@ const Loading = () => {
         <h1 class='font-bold text-xl my-[1rem]'>Updating your feed</h1>
       </div>
     </Fragment>
-  );
-};
-
-const TrendingTags = () => {
-  const data = ['Fashion', 'Art', 'Design', 'Film', 'Photography', 'Makeup', 'Beauty', 'News', 'Nail Art', 'Spiritual'];
-  return (
-    <div class='flex w-full h-20 flex items-center '>
-      <div class='flex w-[7rem] border-r-[1px] border-slate-200 items-center'>
-        <div>
-          <h2 class='font-[600] text-xl pr-[10px]'>Trending</h2>
-        </div>
-        {/* <div>
-          <TrendingIcon classes={'w-5 h-5'} />
-        </div> */}
-      </div>
-
-      <div class='w-[89%] pl-[10px]'>
-        <Marquee>
-          {data.map((tag, i) => (
-            <div key={i} class='w-[10%] flex items-center justify-center'>
-              <h3 class=' text-lg text-placeholders font-[600]'>{tag}</h3>
-            </div>
-          ))}
-        </Marquee>
-      </div>
-    </div>
   );
 };
 

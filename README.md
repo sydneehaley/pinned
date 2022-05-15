@@ -21,7 +21,7 @@ Current repo includes 90% of app's features. Currently testing features with Cyp
 
 ### Current Features
 
--CRUD
+-CRUD #
 -Authentication/user account
 -Upload images
 -Store images 

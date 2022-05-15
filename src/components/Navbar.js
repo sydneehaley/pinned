@@ -271,7 +271,7 @@ const SearchPopoverContent = ({ toggle, closeDropdown, query }) => {
                 {filteredContent?.length !== 0 ? (
                   <div class='flex flex-col'>
                     <div class='w-full'>
-                      <ul class='flex flex-col items-start'>
+                      <ul class='pl-[2rem] flex flex-col items-start'>
                         {filteredContent?.slice(0, 6).map((val, i) => {
                           return (
                             <li key={i} class={`font-medium rounded-full min-w-[80px] flex items-center cursor-pointer mb-[1.5rem]`}>
@@ -286,7 +286,7 @@ const SearchPopoverContent = ({ toggle, closeDropdown, query }) => {
                     </div>
                   </div>
                 ) : (
-                  <div>
+                  <div class='pl-[2rem] flex flex-col items-start'>
                     <h3>
                       No matches found for "<b>{query}</b>"
                     </h3>

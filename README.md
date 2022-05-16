@@ -17,8 +17,12 @@ View demo at: (http://pinned-images-gallery.netlify.app)
 
 ### Progress - 80%
 
-Current repo includes 90% of app's features. Currently testing features with Cypress. Completing UI kit in Adobe XD.
+Current repo includes 100% of app's initial features. Currently testing features with Cypress. Code cleanup & comments. Completing UI kit in Adobe XD.
 
 ### Current Features
 
-CRUD,Authentication/user account, Upload images, Organizing images with user-generated boards, Social: User following and followers, Account/profile settings
+CRUD, Authentication/user account, Upload images, Organizing images with user-generated boards, Social: User following and followers, Account/profile settings
+
+### Future Features I want to implement
+
+Messages, Sending pins betweens users, Likes, Pin Sharing, Browser extension to save content from other sources

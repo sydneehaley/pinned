@@ -1,46 +1,82 @@
-import React, { useEffect, useState } from 'react';
-import { BrowserRouter, Route, Routes, useLocation, Navigate, useNavigate } from 'react-router-dom';
-import _ from 'lodash';
-import Welcome from './components/Welcome';
-import Layout from './components/Layout';
-import Gallery from './components/Gallery';
-import Board from './components/Board';
-import UserProfile from './components/UserProfile';
-import PublicUserProfile from './components/PublicUserProfile';
-import CreatePin from './components/CreatePin';
-import CreateBoard from './components/CreateBoard';
-import EditBoard from './components/EditBoard';
-import PinView from './components/PinView';
-import PinViewModalSearch from './components/PinViewModalSearch';
-import PinViewModal from './components/PinViewModal';
-import EditPin from './components/EditPin';
-import DeletePin from './components/DeletePin';
-import Settings from './components/Settings';
-import SearchResults from './components/SearchResults';
-import Error from './components/Error';
-import Featured from './components/Featured';
-import Modal from './components/UI/Modal';
-import { AuthContextProvider, useAuthState } from './firebase/config';
+import React from "react";
+import { Route, Routes, useLocation, Navigate, useNavigate } from "react-router-dom";
+import _ from "lodash";
+import Welcome from "./components/Welcome";
+import Layout from "./components/Layout";
+import Gallery from "./components/Gallery";
+import Board from "./components/Board";
+import UserProfile from "./components/UserProfile";
+import PublicUserProfile from "./components/PublicUserProfile";
+import CreatePin from "./components/CreatePin";
+import CreateBoard from "./components/CreateBoard";
+import EditBoard from "./components/EditBoard";
+import PinView from "./components/PinView";
+import PinViewModalSearch from "./components/PinViewModalSearch";
+import PinViewModal from "./components/PinViewModal";
+import EditPin from "./components/EditPin";
+import DeletePin from "./components/DeletePin";
+import Settings from "./components/Settings";
+import SearchResults from "./components/SearchResults";
+import Error from "./components/Error";
+import Featured from "./components/Featured";
+import Modal from "./components/UI/Modal";
+import { useAuthState } from "./firebase/config";
+
+// This component protects specific routes from the public.
 
 const ProtectedRoute = ({ children }) => {
   let location = useLocation();
   const { isAuthenticated } = useAuthState();
 
+  /* 
+
+If user is authenticated, route is displayed. Previous location is stored
+in location state so user can return to route they were at before logging in 
+
+*/
+
   if (!isAuthenticated) {
     return <Navigate to='/signup' state={{ from: location }} replace />;
   }
 
+  // Children prop returns all routes nested under Protected Route component
+
   return children;
 };
 
+// This component contains Routes wrapper component for the app's routes.
+
 const App = () => {
-  const { user, users } = useAuthState();
-  const navigate = useNavigate();
+  //This variable gets all users data from context component from the custom app state hook.
+
+  const { users } = useAuthState();
+
+  /* 
+
+Variables created for useLocation hook (React Router) and for background location state. 
+The background location is need to display content in a modal view that sets a background location/view.
+
+*/
 
   let location = useLocation();
-
   let background = location.state && location.state.background;
-  // let gallery = location.state && location.state.gallery;
+
+  /* 
+
+  App routes component is returned. Routes component includes location 
+  prop that sets location data for each route. That location being the 
+  background state set in the variable above or location without 
+  background state (modal view). Components that are not wrapped in 
+  ProtectedRoute component are viewable without a user being authenticated.
+
+  Line 172 creates a public user profile route so that all user's profiles are
+  able to be viewed without having a user account. Public route is generated from 
+  an array that contains all users data, creating a route with user's username.
+  
+  Lines 219 and 225 create the route for modal views of pins from the home gallery
+  view and the search results view.
+
+  */
 
   return (
     <div>
@@ -150,7 +186,7 @@ const App = () => {
             }
           />
           {users?.map((user) => (
-            <Route exact path={'/' + user.displayName} element={<PublicUserProfile />} />
+            <Route exact path={"/" + user.displayName} element={<PublicUserProfile />} />
           ))}
 
           <Route

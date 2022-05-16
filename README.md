@@ -21,10 +21,4 @@ Current repo includes 90% of app's features. Currently testing features with Cyp
 
 ### Current Features
 
--CRUD #
--Authentication/user account
--Upload images
--Store images 
--Organizing images with user-generated boards
--Social: User following and followers
--Account/profile settings
+CRUD,Authentication/user account, Upload images, Organizing images with user-generated boards, Social: User following and followers, Account/profile settings

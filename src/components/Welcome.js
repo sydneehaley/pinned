@@ -1,35 +1,21 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-
-import { createAccount, toggleSignIn, signUpUser, signInAuthUser } from '../store/features/appState';
+import { db, signup, signin } from '../firebase/config';
+import { doc, setDoc, Timestamp } from 'firebase/firestore';
 import CircleIcon from '@mui/icons-material/Circle';
-import { useAuthState } from '../firebase/config';
 
 const Welcome = () => {
-  const { isAuthenticated } = useAuthState();
-  const { user } = useAuthState();
-  const { isLoaded } = useAuthState();
-  console.log(isAuthenticated);
-  console.log(user);
-  console.log(isLoaded);
   let navigate = useNavigate();
   let location = useLocation();
-
   let from = location.state?.from?.pathname || '/';
-
-  const dispatch = useDispatch();
-  const getState = useSelector((state) => state.pingallery);
-
-  console.log(getState);
+  const [toggleSignIn, setToggleSignIn] = useState();
+  const [userCreated, setUserCreated] = useState(false);
 
   const [createUser, setCreateUser] = useState({
     id: '',
     email: '',
-    // username: '',
     password: '',
   });
-  const toggleSignInForm = useSelector((state) => state.pingallery.wantsSignIn);
 
   const handleOnChange = (e) => {
     e.preventDefault();
@@ -39,22 +25,47 @@ const Welcome = () => {
     });
   };
 
+  const signUpNewUser = async () => {
+    try {
+      const { user } = await signup(createUser.email, createUser.password);
+      await setDoc(doc(db, 'public_users', `${user?.uid}`), {
+        created: Timestamp.now(),
+        displayName: '',
+        header_image: '',
+        name: '',
+        photoURL: '',
+        tagline: '',
+        uid: '',
+        website: '',
+      });
+
+      await setDoc(doc(db, 'public_users', `${user?.uid}`, 'currSearchQuery', 'query'), { active: true });
+      await setDoc(doc(db, 'public_users', `${user?.uid}`, 'followers', 'active'), { active: true });
+      await setDoc(doc(db, 'public_users', `${user?.uid}`, 'following', 'active'), { active: true });
+      await setDoc(doc(db, 'public_users', `${user?.uid}`, 'saved_pins', 'active'), { active: true });
+      await setDoc(doc(db, 'public_users', `${user?.uid}`, 'searches', 'active'), { active: true });
+
+      setUserCreated(true);
+      return user;
+    } catch (error) {
+      console.log('error', error);
+    }
+  };
+
   const handleOnSubmit = (e) => {
     e.preventDefault();
-
-    dispatch(signUpUser(createUser));
-    dispatch(createAccount());
+    signUpNewUser();
     navigate(from, { replace: true });
-    // dispatch(getAuthUserData());}
   };
-  const handleLoginToggle = () => {
-    dispatch(toggleSignIn());
+
+  const handleToggle = () => {
+    setToggleSignIn(!toggleSignIn);
   };
 
   return (
     <div className='account'>
       <div className='account__container'>
-        {toggleSignInForm === false ? (
+        {toggleSignIn === false || userCreated === true ? (
           <div class='min-h-full flex flex-col items-center justify-center py-12 px-4 sm:px-6 lg:px-8'>
             <div class='max-w-md w-full space-y-8'>
               <div>
@@ -62,7 +73,7 @@ const Welcome = () => {
                   <CircleIcon />
                 </div>
                 <h2 class='mt-6 text-center text-3xl font-extrabold text-gray-900'>Welcome to Pinned</h2>
-                <p class='mt-2 text-center text-sm text-gray-600'>Post your ideas</p>
+                <p class='mt-2 text-center text-sm text-gray-600'>Share your ideas</p>
               </div>
               <form class='mt-8 space-y-6' action='#' method='POST' onSubmit={handleOnSubmit}>
                 <input type='hidden' name='remember' value='true' />
@@ -168,27 +179,24 @@ const Welcome = () => {
               <p class='mt-2 text-center text-sm text-gray-600'>
                 By continuing, you agree to our <b>Terms of Service</b> and acknowledge you've read our <b>Privacy Policy</b>
               </p>
-              <p class='mt-2 text-center text-sm text-gray-600' onClick={handleLoginToggle}>
+              <p class='mt-2 text-center text-sm text-gray-600 cursor-pointer' onClick={handleToggle}>
                 Already a member? <b> Log in</b>
               </p>
             </div>
           </div>
         ) : (
-          <SignIn />
+          <SignIn toggle={handleToggle} />
         )}
       </div>
     </div>
   );
 };
 
-const SignIn = () => {
-  const { user } = useAuthState();
+const SignIn = ({ toggle }) => {
   let navigate = useNavigate();
   let location = useLocation();
 
   let from = location.state?.from?.pathname || '/';
-  const dispatch = useDispatch();
-  const errors = useSelector((state) => state.pingallery.errors);
 
   const [userInput, setUserInput] = useState({
     email: '',
@@ -215,16 +223,11 @@ const SignIn = () => {
     });
 
     if (allFieldsFilled) {
-      dispatch(signInAuthUser(userInput));
-      // navigate(from, { replace: true });
+      signin(email, password);
       navigate(from, { replace: true });
     } else {
       setErrorMsg('Please complete all fields');
     }
-  };
-
-  const handleCreateAccountToggle = () => {
-    dispatch(toggleSignIn());
   };
 
   return (
@@ -236,7 +239,7 @@ const SignIn = () => {
               <div class='flex flex-col justify-center items-center text-red text-6xl'>
                 <CircleIcon />
               </div>
-              <h2 class='mt-6 text-center text-3xl font-extrabold text-gray-900'>Welcome Back</h2>
+              <h2 class='mt-6 text-center text-3xl font-extrabold text-gray-900'>Sign in </h2>
               <p class='mt-2 text-center text-sm text-gray-600'>Sign into your account</p>
             </div>
             <form class='mt-8 space-y-6' action='#' method='POST' onSubmit={handleOnClick}>
@@ -320,8 +323,8 @@ const SignIn = () => {
           </div>
 
           <div class='mt-6 ... w-1/4'>
-            <p class='mt-2 text-center text-sm text-gray-600'>
-              Not a member? <b onClick={handleCreateAccountToggle}>Create An Account</b>
+            <p class='mt-2 text-center text-sm text-gray-600 cursor-pointer'>
+              Not a member? <b onClick={toggle}>Create An Account</b>
             </p>
           </div>
         </div>

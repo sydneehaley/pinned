@@ -57,7 +57,7 @@ export default function CreatePublishEditForm({
   };
 
   return (
-    <div class='w-full h-full flex  items-center justify-center bg-lightest_gray'>
+    <div class='w-full h-[100vh] flex  items-center justify-center bg-neutral-200'>
       <div class='flex flex-form_side  w-full items-center justify-center'></div>
       <div class='w-full h-[75vh] flex flex-col flex-form_middle basis-[17%] items-center justify-center'>
         {/* Middle Container */}
@@ -67,15 +67,15 @@ export default function CreatePublishEditForm({
         {/* Form Container  */}
         <div class='bg-white flex w-full h-full items-center justify-center rounded-lg p-[3rem] '>
           <div class='flex w-full h-full justify-between gap-x-5'>
-            <div class={`flex ${pinImg === '' ? 'bg-lightest_gray' : null}  flex-1 rounded-md`}>
+            <div class={`flex ${pinImg === '' ? 'bg-neutral-200' : null}  flex-1 rounded-md`}>
               <div class={`w-full  flex items-center justify-center ${pinImg === '' ? 'p-[1rem]' : null}`}>
-                <div class={`w-full h-full flex justify-center ${pinImg === '' ? ' border-2 border-dashed' : null} border-gray-300`}>
+                <div class={`w-full h-full flex justify-center ${pinImg === '' ? ' border-2 border-dashed' : null} border-neutral-400`}>
                   <input hidden id='uploadImg' type='file' accept='image/*' onChange={onFileChange} />
                   {label && (
                     <label for='uploadImg' class='w-full flex flex-col items-center justify-center'>
                       <div class='bg-red rounded-full w-10 h-10 flex items-center justify-center'>
                         {' '}
-                        <AddIcon stroke={'white'} classes={' w-8 h-8'} />
+                        <AddIcon fill={'white'} classes={'w-6 h-6'} />
                       </div>
                     </label>
                   )}
@@ -128,9 +128,9 @@ export default function CreatePublishEditForm({
                   <input
                     class={`${
                       title === ''
-                        ? 'border-b border-solid border-placeholders border-t-0 border-l-0 border-r-0 focus:ring-0  focus:border-blue-500'
+                        ? 'border-b border-solid border-neutral-400 border-t-0 border-l-0 border-r-0 focus:ring-0  focus:border-blue-500'
                         : 'border-b-0 border-t-0 border-l-0 border-r-0 border-solid focus:ring-0  focus:border-blue-500'
-                    } w-full m-0  pl-0  text-[36px] font-bold text-black placeholder:text-placeholders  focus:border-b-2`}
+                    } w-full m-0  pl-0  text-[36px] font-bold text-black placeholder:text-neutral-600  focus:border-b-2`}
                     type='text'
                     placeholder={`Title`}
                     name='title'
@@ -138,7 +138,7 @@ export default function CreatePublishEditForm({
                     onChange={inputOnChange}
                   ></input>
                   <div class='flex items-center pt-[2rem] pb-[1rem]'>
-                    <img class='w-[50px] h-[50px] rounded-full border-2 p-[3px] border-solid border-input_gray' src={user?.photoURL} />
+                    <img class='w-[50px] h-[50px] rounded-full  p-[2px]' src={user?.photoURL} />
 
                     <h6 class='ml-3 font-bold ml-[5px] mb-0 mr-0 mt-0'>{user?.displayName}</h6>
                   </div>
@@ -147,7 +147,7 @@ export default function CreatePublishEditForm({
                 <div class='w-full flex flex-col justify-end'>
                   <div class='w-full py-[2rem]'>
                     <input
-                      class='flex font-medium w-full focus:ring-0 focus:border-blue-500 focus:border-b-2 border-placeholders border-b-1 border-t-0 border-l-0 border-r-0 border-solid pl-0 pr-0 py-[0.5rem] placeholder:text-light_placeholders placeholder:font-normal placeholder:text-[1rem]'
+                      class='flex font-medium w-full focus:ring-0 focus:border-blue-500 focus:border-b-2 border-neutral-400 border-b-1 border-t-0 border-l-0 border-r-0 border-solid pl-0 pr-0 py-[0.5rem] placeholder:text-neutral-500 placeholder:font-normal placeholder:text-[1rem]'
                       placeholder='Tell everyone what your Pin is about'
                       type='text'
                       name='description'
@@ -159,14 +159,18 @@ export default function CreatePublishEditForm({
                   <div class='pt-0 pb-[5rem]'>
                     {toggleAlt === false ? (
                       <div>
-                        <Button background={'bg-lightest_gray'} onClickAction={toggleField}>
+                        <Button
+                          background={'bg-neutral-200'}
+                          onClickAction={toggleField}
+                          classes={'py-[12px] px-[1rem] min-h-[48px] min-w-[60px] outline-0 hover:bg-black hover:text-white'}
+                        >
                           Add alt tag
                         </Button>
                       </div>
                     ) : (
                       <div class='w-full'>
                         <input
-                          class='flex font-medium w-full focus:ring-0 focus:border-blue-500 focus:border-b-2 border-placeholders border-b-1 border-t-0 border-l-0 border-r-0 border-solid pl-0 pr-0 py-[0.5rem] placeholder:text-light_placeholders placeholder:font-normal placeholder:text-[1rem]'
+                          class='flex font-medium w-full focus:ring-0 focus:border-blue-500 focus:border-b-2 border-neutral-400 border-b-1 border-t-0 border-l-0 border-r-0 border-solid pl-0 pr-0 py-[0.5rem] placeholder:text-neutral-500 placeholder:font-normal placeholder:text-[1rem]'
                           name='alt_tag'
                           placeholder='Alt tag'
                           type='text'
@@ -178,7 +182,7 @@ export default function CreatePublishEditForm({
                   </div>
                   <div class='w-full flex items-center'>
                     <input
-                      class='flex font-bold text-[18px] w-full h-full focus:ring-0 focus:border-blue-500 border-placeholders border-b-1 border-t-0 border-l-0 border-r-0 border-solid pl-0 pr-0 py-[0.5rem] placeholder:text-placeholders placeholder:font-normal placeholder:text-[18px]'
+                      class='flex font-bold text-[18px] w-full h-full focus:ring-0 focus:border-blue-500 border-neutral-400 border-b-1 border-t-0 border-l-0 border-r-0 border-solid pl-0 pr-0 py-[0.5rem] placeholder:text-neutral-500 placeholder:font-normal placeholder:text-[18px]'
                       name='target'
                       placeholder='Add a destination link'
                       type='text'

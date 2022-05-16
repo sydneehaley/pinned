@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { signup, login, logout } from '../../firebase/config';
+import { signup, signin, logout } from '../../firebase/config';
 import { db } from '../../firebase/config';
 import { doc, setDoc, updateDoc } from 'firebase/firestore';
 import _ from 'lodash';
@@ -52,7 +52,7 @@ export const signUpUser = createAsyncThunk('pingallery/signupUser', async (creat
 
 export const signInAuthUser = createAsyncThunk('pingallery/signInAuthUser', async (userInput) => {
   try {
-    const { user } = await login(userInput.email, userInput.password);
+    const { user } = await signin(userInput.email, userInput.password);
     console.log(user);
     return user;
   } catch (error) {

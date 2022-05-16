@@ -1,10 +1,11 @@
-import { useEffect, useState, createContext, useContext } from 'react';
-import { initializeApp } from 'firebase/app';
-import { getFirestore, onSnapshot, doc, query, where, collection } from '@firebase/firestore';
-import { getStorage, ref } from 'firebase/storage';
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from 'firebase/auth';
-import _ from 'lodash';
-import { useCollectionData } from 'react-firebase-hooks/firestore';
+import { useEffect, useState, createContext, useContext } from "react";
+import { initializeApp } from "firebase/app";
+import { getFirestore, onSnapshot, doc, query, where, collection } from "@firebase/firestore";
+import { getStorage } from "firebase/storage";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "firebase/auth";
+import _ from "lodash";
+
+// Local .env variables created for Firebase API
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
@@ -15,10 +16,14 @@ const firebaseConfig = {
   appId: process.env.REACT_APP_FIREBASE_APP_ID,
 };
 
+// Variables created for access to Firebase Firestore, Auth, and Storage.
+
 const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
 export const auth = getAuth();
 export const storage = getStorage(app);
+
+// Firebase's Authentication methods for account sign up, login, and logout with email/password.
 
 export function signup(email, password) {
   return createUserWithEmailAndPassword(auth, email, password);
@@ -32,9 +37,15 @@ export function logout() {
   return signOut(auth);
 }
 
+// App's context component is initialized.
+
 export const AuthContext = createContext();
 
+// Context Provider component.
+
 export const AuthContextProvider = (props) => {
+  // All state hooks to be handled by context provider.
+
   const [user, setUser] = useState();
   const [userProfile, setUserProfile] = useState();
   const [users, setUsers] = useState();
@@ -53,53 +64,61 @@ export const AuthContextProvider = (props) => {
   const [userSearches, setUserSearches] = useState();
   const [currSearch, setCurrSearch] = useState();
 
+  // All data is fetched upon mounting from Firebase database.
+
   useEffect(() => {
     setLoading(true);
-    console.log('user signing in...');
+    console.log("user signing in...");
+
+    // Current user is authenticated. Current user and all user's data is fetched and organized.
 
     onAuthStateChanged(auth, (res) => {
       if (res) {
         setUser(res);
         setLoading(false);
-        console.log('user signed in');
+        console.log("user signed in");
         console.log(res);
       } else {
-        console.log('user not signed in');
+        console.log("user not signed in");
       }
 
-      const contentCollectionRef = collection(db, 'content');
-      const usersCollectionRef = collection(db, 'public_users');
-      const userFollowingRef = collection(db, 'public_users', `${res?.uid}`, 'following');
+      // Variables to documents and collections in Firestore database.
 
-      const userFollowersRef = collection(db, 'public_users', `${res?.uid}`, 'followers');
+      const contentCollectionRef = collection(db, "content");
+      const usersCollectionRef = collection(db, "public_users");
+      const userFollowingRef = collection(db, "public_users", `${res?.uid}`, "following");
+      const userFollowersRef = collection(db, "public_users", `${res?.uid}`, "followers");
+      const userSavedContentRef = collection(db, "public_users", `${res?.uid}`, "saved_pins");
+      const userSearchedContentRef = collection(db, "public_users", `${res?.uid}`, "searches");
+      const userCurrSearchRef = collection(db, "public_users", `${res?.uid}`, "currSearchQuery");
 
-      const userSavedContentRef = collection(db, 'public_users', `${res?.uid}`, 'saved_pins');
-      const userSearchedContentRef = collection(db, 'public_users', `${res?.uid}`, 'searches');
-      const userCurrSearchRef = collection(db, 'public_users', `${res?.uid}`, 'currSearchQuery');
+      //Variables for queries that fetch specific data from documents and collections.
 
-      const q_user = query(usersCollectionRef, where('uid', '==', `${res?.uid}`));
-      const q_user_boards = query(contentCollectionRef, where('author', '==', `${res?.uid}`), where('type', '==', 'board'));
-      const q_user_pins = query(contentCollectionRef, where('author', '==', `${res?.uid}`), where('type', '==', 'pin'));
+      const q_user = query(usersCollectionRef, where("uid", "==", `${res?.uid}`));
+      const q_user_boards = query(contentCollectionRef, where("author", "==", `${res?.uid}`), where("type", "==", "board"));
+      const q_user_pins = query(contentCollectionRef, where("author", "==", `${res?.uid}`), where("type", "==", "pin"));
+      const q_user_following = query(userFollowingRef, where("type", "==", "following"));
+      const q_user_followers = query(userFollowersRef, where("type", "==", "followers"));
+      const q_user_saved_pins = query(userSavedContentRef, where("saved", "==", true));
+      const q_pins = query(contentCollectionRef, where("type", "==", "pin"));
+      const q_boards = query(contentCollectionRef, where("type", "==", "board"));
+      const q_searches = query(userSearchedContentRef, where("type", "==", "search"));
+      const q_currsearch = query(userCurrSearchRef, where("type", "==", "currSearch"));
 
-      const q_user_following = query(userFollowingRef, where('type', '==', 'following'));
+      /* 
+      
+Data that is fetched and stored to state using Firestore snapshots. onSnapshots method
+fetches live data. 
+      
+*/
 
-      const q_user_followers = query(userFollowersRef, where('type', '==', 'followers'));
-
-      const q_user_saved_pins = query(userSavedContentRef, where('saved', '==', true));
-
-      const q_pins = query(contentCollectionRef, where('type', '==', 'pin'));
-      const q_boards = query(contentCollectionRef, where('type', '==', 'board'));
-      const q_searches = query(userSearchedContentRef, where('type', '==', 'search'));
-      const q_currsearch = query(userCurrSearchRef, where('type', '==', 'currSearch'));
-
-      /* Users & Profiles */
+      // Users & Profiles
 
       onSnapshot(usersCollectionRef, (doc) => {
         const users_data = [];
         doc.docs.forEach((doc) => {
           users_data.push(doc.data());
         });
-        // console.log(users_data);
         setUsers(users_data);
       });
 
@@ -118,8 +137,8 @@ export const AuthContextProvider = (props) => {
         querySnapshot.docs.forEach((doc) => {
           user_following.push(doc.data());
         });
-        console.log(user_following.filter((usrs) => usrs.type === 'following'));
-        setUserFollowing(user_following.filter((usrs) => usrs.type === 'following'));
+        console.log(user_following.filter((usrs) => usrs.type === "following"));
+        setUserFollowing(user_following.filter((usrs) => usrs.type === "following"));
       });
 
       onSnapshot(q_user_followers, (querySnapshot) => {
@@ -206,6 +225,8 @@ export const AuthContextProvider = (props) => {
     console.log(loading);
   }, []);
 
+  // Context provider component is returned with value props (and any other props) that contain all the above state.
+
   return (
     <AuthContext.Provider
       value={{
@@ -232,11 +253,19 @@ export const AuthContextProvider = (props) => {
   );
 };
 
+/* 
+
+Context provider is exported and made available to all other components
+wrapped in the <AuthContentProvider> component using a custom hook variable
+'useAuthState'. useAuthState includes AuthContext data and isAuthenticated prop
+that determines if user is logged in or not. 
+
+*/
+
 export const useAuthState = () => {
   const auth = useContext(AuthContext);
   return {
     ...auth,
     isAuthenticated: auth?.user != null,
-    isLoaded: auth?.user != null,
   };
 };

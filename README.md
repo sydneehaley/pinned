@@ -21,8 +21,8 @@ Current repo includes 100% of app's initial features. Currently testing features
 
 ### Current Features
 
-CRUD, Authentication/user account, Upload images, Organizing images with user-generated boards, Social: User following and followers, Account/profile settings
+CRUD, Authentication/user account, upload images, organize images with user-generated boards, social: user following, followers, and profile, Users can save other users content, account/profile settings
 
 ### Future features I want to implement
 
-Messages, Sending pins betweens users, Likes, Pin Sharing, Browser extension to save content from other sources
+Messages, Sending pins betweens users, likes, pin Sharing, save content from other sources, blocking, report content and users

@@ -1,9 +1,9 @@
-import { useEffect, useState, createContext, useContext } from "react";
-import { initializeApp } from "firebase/app";
-import { getFirestore, onSnapshot, doc, query, where, collection } from "@firebase/firestore";
-import { getStorage } from "firebase/storage";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "firebase/auth";
-import _ from "lodash";
+import { useEffect, useState, createContext, useContext } from 'react';
+import { initializeApp } from 'firebase/app';
+import { getFirestore, onSnapshot, doc, query, where, collection } from '@firebase/firestore';
+import { getStorage } from 'firebase/storage';
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from 'firebase/auth';
+import _ from 'lodash';
 
 // Local .env variables created for Firebase API
 
@@ -29,7 +29,7 @@ export function signup(email, password) {
   return createUserWithEmailAndPassword(auth, email, password);
 }
 
-export function login(email, password) {
+export function signin(email, password) {
   return signInWithEmailAndPassword(auth, email, password);
 }
 
@@ -68,7 +68,7 @@ export const AuthContextProvider = (props) => {
 
   useEffect(() => {
     setLoading(true);
-    console.log("user signing in...");
+    console.log('user signing in...');
 
     // Current user is authenticated. Current user and all user's data is fetched and organized.
 
@@ -76,34 +76,34 @@ export const AuthContextProvider = (props) => {
       if (res) {
         setUser(res);
         setLoading(false);
-        console.log("user signed in");
+        console.log('user signed in');
         console.log(res);
       } else {
-        console.log("user not signed in");
+        console.log('user not signed in');
       }
 
       // Variables to documents and collections in Firestore database.
 
-      const contentCollectionRef = collection(db, "content");
-      const usersCollectionRef = collection(db, "public_users");
-      const userFollowingRef = collection(db, "public_users", `${res?.uid}`, "following");
-      const userFollowersRef = collection(db, "public_users", `${res?.uid}`, "followers");
-      const userSavedContentRef = collection(db, "public_users", `${res?.uid}`, "saved_pins");
-      const userSearchedContentRef = collection(db, "public_users", `${res?.uid}`, "searches");
-      const userCurrSearchRef = collection(db, "public_users", `${res?.uid}`, "currSearchQuery");
+      const contentCollectionRef = collection(db, 'content');
+      const usersCollectionRef = collection(db, 'public_users');
+      const userFollowingRef = collection(db, 'public_users', `${res?.uid}`, 'following');
+      const userFollowersRef = collection(db, 'public_users', `${res?.uid}`, 'followers');
+      const userSavedContentRef = collection(db, 'public_users', `${res?.uid}`, 'saved_pins');
+      const userSearchedContentRef = collection(db, 'public_users', `${res?.uid}`, 'searches');
+      const userCurrSearchRef = collection(db, 'public_users', `${res?.uid}`, 'currSearchQuery');
 
       //Variables for queries that fetch specific data from documents and collections.
 
-      const q_user = query(usersCollectionRef, where("uid", "==", `${res?.uid}`));
-      const q_user_boards = query(contentCollectionRef, where("author", "==", `${res?.uid}`), where("type", "==", "board"));
-      const q_user_pins = query(contentCollectionRef, where("author", "==", `${res?.uid}`), where("type", "==", "pin"));
-      const q_user_following = query(userFollowingRef, where("type", "==", "following"));
-      const q_user_followers = query(userFollowersRef, where("type", "==", "followers"));
-      const q_user_saved_pins = query(userSavedContentRef, where("saved", "==", true));
-      const q_pins = query(contentCollectionRef, where("type", "==", "pin"));
-      const q_boards = query(contentCollectionRef, where("type", "==", "board"));
-      const q_searches = query(userSearchedContentRef, where("type", "==", "search"));
-      const q_currsearch = query(userCurrSearchRef, where("type", "==", "currSearch"));
+      const q_user = query(usersCollectionRef, where('uid', '==', `${res?.uid}`));
+      const q_user_boards = query(contentCollectionRef, where('author', '==', `${res?.uid}`), where('type', '==', 'board'));
+      const q_user_pins = query(contentCollectionRef, where('author', '==', `${res?.uid}`), where('type', '==', 'pin'));
+      const q_user_following = query(userFollowingRef, where('type', '==', 'following'));
+      const q_user_followers = query(userFollowersRef, where('type', '==', 'followers'));
+      const q_user_saved_pins = query(userSavedContentRef, where('saved', '==', true));
+      const q_pins = query(contentCollectionRef, where('type', '==', 'pin'));
+      const q_boards = query(contentCollectionRef, where('type', '==', 'board'));
+      const q_searches = query(userSearchedContentRef, where('type', '==', 'search'));
+      const q_currsearch = query(userCurrSearchRef, where('type', '==', 'currSearch'));
 
       /* 
       
@@ -137,8 +137,8 @@ fetches live data.
         querySnapshot.docs.forEach((doc) => {
           user_following.push(doc.data());
         });
-        console.log(user_following.filter((usrs) => usrs.type === "following"));
-        setUserFollowing(user_following.filter((usrs) => usrs.type === "following"));
+        console.log(user_following.filter((usrs) => usrs.type === 'following'));
+        setUserFollowing(user_following.filter((usrs) => usrs.type === 'following'));
       });
 
       onSnapshot(q_user_followers, (querySnapshot) => {

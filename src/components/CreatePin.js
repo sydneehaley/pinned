@@ -173,10 +173,10 @@ const CreatePin = () => {
       <Listbox value={selectedBoard} onChange={handleBoardChange} as='div'>
         <div className='relative m-0'>
           <div class='relative flex w-full justify-end items-end'>
-            <Listbox.Button className='bg-lightest_gray px-[14px] max-w-[10rem] min-w-[10rem] max-h-[40px] rounded-tl-lg rounded-bl-lg w-full py-[14px] cursor-default flex items-center focus:outline-0'>
-              <span class='font-bold text-medium_gray w-1/2 flex justify-start'>{selectedBoard?.title}</span>
+            <Listbox.Button className='bg-neutral-200 px-[14px] max-w-[10rem] min-w-[10rem] max-h-[40px] rounded-tl-lg rounded-bl-lg w-full py-[14px] cursor-default flex items-center focus:outline-0'>
+              <span class='font-bold text-neutral-600 w-1/2 flex justify-start'>{selectedBoard?.title}</span>
               <span class='w-1/2 flex justify-end'>
-                <ChevronDownIcon fill={'none'} classes={'text-medium_gray w-4 h-4 stroke-medium_gray '} />
+                <ChevronDownIcon fill={'none'} classes={'text-medium_gray w-4 h-4 stroke-neutral-600 '} />
               </span>
             </Listbox.Button>
           </div>
@@ -186,7 +186,7 @@ const CreatePin = () => {
                 <h6 class='font-bold pb-[1rem] pt-[1rem] flex items-center justify-start'>Save to boards</h6>
 
                 <div class='absolute h-[50px] flex items-center left-[30px]'>
-                  <SearchIcon classes={'w-5 h-5 stroke-placeholders'} stroke={'placeholders'} fill={'none'} />
+                  <SearchIcon classes={'w-4 h-4 fill-neutral-500 '} fill={'neutral-400'} />
                 </div>
 
                 <input

@@ -1,39 +1,25 @@
 import React, { Fragment, useState, useRef, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { Link, Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { doc, onSnapshot } from 'firebase/firestore';
-import { db, useAuthState } from '../firebase/config';
+import { Link, useLocation } from 'react-router-dom';
+import { useAuthState } from '../firebase/config';
 import Modal from './UI/Modal';
-import { getBackground, setSearchActive } from '../store/features/appState';
 import Marquee from 'react-fast-marquee';
 import { css } from '@emotion/react';
 import HashLoader from 'react-spinners/HashLoader';
-import BoardsIcon from './UI/Icons/BoardsIcon';
-import HeartOutlineIcon from './UI/Icons/HeartOutlineIcon';
 import _ from 'lodash';
-import ChevronDownIcon from './UI/Icons/ChevronDownIcon';
-import PinView from './PinView';
 import AddIcon from './UI/Icons/AddIcon';
 import SaveToBoard from './UI/SaveToBoard';
-import TrendingIcon from './UI/Icons/TrendingIcon';
-import AddSolidIcon from './UI/Icons/AddSolidIcon';
-import SendIcon from './UI/Icons/SendIcon';
-import MoreIcon from './UI/Icons/MoreIcon';
+
+// This component renders each individual pin.
 
 const PinCard = (props) => {
   const location = useLocation();
-  console.log(location);
-  const dispatch = useDispatch();
   const [hover, setHover] = useState(false);
-  const { users, pins, user } = useAuthState();
+  const { users, pins } = useAuthState();
   const [toggleModal, setToggleModal] = useState(false);
-  const [getSpans, setGetSpans] = useState(1);
   const imageRef = useRef();
   const pinContainer = useRef();
 
-  useEffect(() => {
-    dispatch(getBackground({ pathname: location.pathname, search: location.search }));
-  }, []);
+  // These functions handle the state which toggles pin view modal.
 
   const handleImageHover = () => {
     setHover(true);
@@ -43,19 +29,35 @@ const PinCard = (props) => {
     setToggleModal(true);
   };
 
-  const closeModal = () => [setToggleModal(false)];
+  const closeModal = () => {
+    setToggleModal(false);
+  };
+
+  /* 
+
+  This logic creates an array (for loop) with indexes from the pins array that changes the height
+  of certain pins in the grid/gallery.
+
+  */
 
   var arr = [];
-
   var dividingVal = 3;
-
   var calculation = Math.floor(pins.length / dividingVal);
 
   for (let i = 0; i < pins.length; i = i + calculation) {
     arr.push(i);
   }
 
+  // If pin's index is included in the array the pin's height is changed.
+
   let isInArray = arr.includes(props.index);
+
+  /* 
+  
+  A div is returned with pin and author/title below it. Hover state is also 
+  implemented for each pen which allows user to save pin to one of their boards.
+  
+  */
 
   return (
     <div
@@ -122,6 +124,8 @@ const PinCard = (props) => {
   );
 };
 
+// This component renders the pin gallery 'masonry' grid with columns.
+
 const PinList = (props) => {
   const images = props.pins?.map((pin, i) => {
     return <PinCard key={i} pin={pin} index={i} />;
@@ -130,9 +134,19 @@ const PinList = (props) => {
   return <div class='columns-5 gap-[25px] inline-block '>{images}</div>;
 };
 
+// This component renders the marquee and pin gallery.
+
 const PinBoard = () => {
+  /*
+
+All pin data, current user data, and current user's following is fetched from Context.
+A new state hook is created to store pins data to be displayed.
+*/
+
   const { pins, userFollowing, user, currSearch } = useAuthState();
   const [followingPins, setFollowingPins] = useState();
+
+  // This logic combines the user's pins with the user's pins they follow
 
   useEffect(() => {
     const following_pins = userFollowing.filter((usr) => usr.user).map((id) => id.user);
@@ -163,6 +177,13 @@ const PinBoard = () => {
   );
 };
 
+/* 
+
+This component handles the scrolling marquee that is displayed above the pin gallery. 
+react-fast-marquee library is used 
+
+*/
+
 const TrendingTags = () => {
   const data = ['Fashion', 'Art', 'Design', 'Film', 'Photography', 'Makeup', 'Beauty', 'News', 'Nail Art', 'Spiritual'];
   return (
@@ -171,9 +192,6 @@ const TrendingTags = () => {
         <div>
           <h2 class='font-[600] text-xl  pr-[10px]'>Trending</h2>
         </div>
-        {/* <div>
-          <TrendingIcon classes={'w-5 h-5'} />
-        </div> */}
       </div>
 
       <div class='w-[89%] pl-[10px]'>
@@ -189,6 +207,8 @@ const TrendingTags = () => {
   );
 };
 
+// This component handles the loading image animation. react-spinners library is used.
+
 const Loading = () => {
   const [loading, setLoading] = useState(true);
   let [color, setColor] = useState('#E53132');
@@ -199,6 +219,7 @@ const Loading = () => {
     padding: 4rem 0 0 0;
     border-color: red;
   `;
+
   return (
     <Fragment>
       <div class='flex flex-col items-center'>
@@ -209,9 +230,12 @@ const Loading = () => {
   );
 };
 
+// This is the parent component which displays the gallery of pins.
+
 const Gallery = () => {
-  const { user } = useAuthState();
   const [loading, setLoading] = useState(true);
+
+  // This timeout display a loader animation that indicated new pins are loading.
 
   useEffect(() => {
     const isLoading = setTimeout(() => {
@@ -219,9 +243,11 @@ const Gallery = () => {
     }, 2500);
   }, []);
 
+  // If loading state is true, the loader animation is displayed, if not the gallery is displayed.
+
   return (
     <div class='w-[95%] m-0'>
-      <div>{loading === true ? <Loading /> : <PinBoard user={user} />}</div>
+      <div>{loading === true ? <Loading /> : <PinBoard />}</div>
     </div>
   );
 };

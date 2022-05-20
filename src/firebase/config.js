@@ -1,6 +1,6 @@
 import { useEffect, useState, createContext, useContext } from 'react';
 import { initializeApp } from 'firebase/app';
-import { getFirestore, onSnapshot, doc, query, where, collection } from '@firebase/firestore';
+import { getFirestore, onSnapshot, query, where, collection } from '@firebase/firestore';
 import { getStorage } from 'firebase/storage';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from 'firebase/auth';
 import _ from 'lodash';
@@ -29,11 +29,21 @@ export function signup(email, password) {
   return createUserWithEmailAndPassword(auth, email, password);
 }
 
-export function signin(email, password) {
-  return signInWithEmailAndPassword(auth, email, password);
-}
+export const signin = async (email, password) => {
+  return signInWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+      // Signed in
+      const user = userCredential.user;
+      console.log(user);
+    })
+    .catch((error) => {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      console.log(errorMessage);
+    });
+};
 
-export function logout() {
+export function signout() {
   return signOut(auth);
 }
 
@@ -67,19 +77,14 @@ export const AuthContextProvider = (props) => {
   // All data is fetched upon mounting from Firebase database.
 
   useEffect(() => {
-    setLoading(true);
-    console.log('user signing in...');
-
     // Current user is authenticated. Current user and all user's data is fetched and organized.
 
     onAuthStateChanged(auth, (res) => {
       if (res) {
         setUser(res);
-        setLoading(false);
-        console.log('user signed in');
         console.log(res);
       } else {
-        console.log('user not signed in');
+        console.log('user signed out');
       }
 
       // Variables to documents and collections in Firestore database.
@@ -137,7 +142,6 @@ fetches live data.
         querySnapshot.docs.forEach((doc) => {
           user_following.push(doc.data());
         });
-        console.log(user_following.filter((usrs) => usrs.type === 'following'));
         setUserFollowing(user_following.filter((usrs) => usrs.type === 'following'));
       });
 
@@ -146,7 +150,7 @@ fetches live data.
         querySnapshot.docs.forEach((doc) => {
           user_followers.push(doc.data());
         });
-        console.log(user_followers);
+
         setUserFollowers(user_followers);
       });
 
@@ -168,10 +172,7 @@ fetches live data.
         querySnapshot?.docs?.forEach((doc) => {
           user_content?.push(doc?.data());
         });
-        const assignProp = user_content.map(function (board, i) {
-          return Object.assign(board, { hover: false });
-        });
-        setUserBoards(assignProp);
+        setUserBoards(user_content);
       });
 
       onSnapshot(q_user_pins, (querySnapshot) => {
@@ -188,7 +189,6 @@ fetches live data.
         querySnapshot.docs.forEach((doc) => {
           user_saved_pins.push(doc.data());
         });
-        console.log(user_saved_pins);
         setUserSavedPins(user_saved_pins);
       });
 
@@ -197,7 +197,6 @@ fetches live data.
         querySnapshot.docs.forEach((doc) => {
           user_searches.push(doc.data());
         });
-        console.log(user_searches);
         setUserSearches(user_searches);
       });
 
@@ -206,7 +205,6 @@ fetches live data.
         querySnapshot.docs.forEach((doc) => {
           user_currsearch.push(doc.data());
         });
-        console.log(user_currsearch);
         setCurrSearch(user_currsearch[0]?.query?.toString());
       });
 
@@ -221,8 +219,6 @@ fetches live data.
         setPins(pins_content);
       });
     });
-
-    console.log(loading);
   }, []);
 
   // Context provider component is returned with value props (and any other props) that contain all the above state.
@@ -238,12 +234,12 @@ fetches live data.
         pins,
         pinsCount,
         user,
+        users,
         userBoards,
         userFollowers,
         userFollowing,
         userPins,
         userProfile,
-        users,
         userSavedPins,
         userSearches,
         currSearch,
@@ -266,6 +262,6 @@ export const useAuthState = () => {
   const auth = useContext(AuthContext);
   return {
     ...auth,
-    isAuthenticated: auth?.user != null,
+    isAuthenticated: auth?.user !== undefined,
   };
 };

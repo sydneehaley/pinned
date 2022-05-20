@@ -33,13 +33,13 @@ Create Board component opens in modal. (Line 41)
     <Fragment>
       <div>
         <Navbar />
-        <div class={`w-full  h-full flex flex-col items-center overflow-scroll `}>
+        <div class={`w-full flex flex-col items-center `}>
           <Outlet />
         </div>
 
         <FooterNavbar openModal={openModal} />
 
-        <Modal isOpen={toggleModal} closeModal={closeModal} openModal={openModal} title={'Create Board'}>
+        <Modal isOpen={toggleModal} closeModal={closeModal} openModal={openModal} title={'Create Board'} modalHeight={'h-[30vh]'}>
           <CreateBoard landing={'/'} />
         </Modal>
       </div>

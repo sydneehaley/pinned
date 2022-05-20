@@ -18,7 +18,7 @@ const Settings = () => {
     <div class='w-full flex items-center justify-center'>
       <div class='w-[90%] flex mt-[2rem] mb-[7rem]'>
         <div class='w-[20%]'>
-          <ul class='font-bold text-[1rem]'>
+          <ul class='font-bold text-[1rem] cursor-pointer'>
             <li onClick={() => dispatch(toggleSettingsSections())}>Public profile</li>
             <li onClick={() => dispatch(toggleSettingsSections())}>Account</li>
           </ul>
@@ -185,7 +185,7 @@ const Account = () => {
       </div>
       <div className='settings__right__container__inputrow--button'>
         <Button
-          background={'bg-lightest_gray'}
+          background={'bg-neutral-200'}
           hover={'hover:bg-red hover:text-white'}
           onClickAction={handleOnClick}
           classes={'py-[12px] px-[1rem] min-h-[48px] min-w-[60px] outline-0 mt-[1rem]'}
@@ -327,8 +327,8 @@ const Profile = () => {
             <input hidden id='uploadImg' type='file' accept='image/*' onChange={onFileChange} />{' '}
             <div class='flex '>
               {profile?.photoURL === '' ? (
-                <div class='rounded-full font-bold text-[1.5rem] bg-lightest_gray  object-cover w-[70px] h-[70px] flex items-center justify-center'>
-                  S
+                <div class='rounded-full font-bold text-[1.5rem] rounded-full outline outline-1 outline-neutral-400 outline-offset-2 text-neutral-900 bg-neutral-200  object-cover w-[70px] h-[70px] flex items-center justify-center'>
+                  U
                 </div>
               ) : (
                 <div>
@@ -342,7 +342,7 @@ const Profile = () => {
             </div>
             <label for='uploadImg'>
               <p
-                class={`bg-lightest_gray py-[12px] px-[1rem] min-h-[48px] min-w-[60px] tracking-normal rounded-full font-bold ml-[1rem] hover:bg-red hover:text-white cursor-pointer`}
+                class={`bg-neutral-200 py-[12px] px-[1rem] min-h-[48px] min-w-[60px] tracking-normal rounded-full font-bold ml-[1rem] hover:bg-red hover:text-white cursor-pointer`}
               >
                 Change
               </p>
@@ -352,7 +352,7 @@ const Profile = () => {
         <div class='flex flex-col mb-[2rem]'>
           <span class='text-[12px] mb-[0.5rem]'>Name</span>
           <input
-            class='rounded-xl border-2 border-solid border-light_gray'
+            class='rounded-xl border-2 border-solid border-neutral-300'
             type='text'
             name='name'
             value={profile?.name || ''}
@@ -362,7 +362,7 @@ const Profile = () => {
         <div class='flex flex-col mb-[2rem]'>
           <span class='text-[12px] mb-[0.5rem]'>Tagline</span>
           <input
-            class='rounded-xl border-2 border-solid border-light_gray'
+            class='rounded-xl border-2 border-solid border-neutral-300'
             placeholder='A short blurb about yourself'
             name='tagline'
             type='text'
@@ -373,7 +373,7 @@ const Profile = () => {
         <div class='flex flex-col mb-[2rem]'>
           <span class='text-[12px] mb-[0.5rem]'>Username</span>
           <input
-            class='rounded-xl border-2 border-solid border-light_gray'
+            class='rounded-xl border-2 border-solid border-neutral-300'
             placeholder='Update your username'
             name='username'
             type='text'
@@ -384,7 +384,7 @@ const Profile = () => {
         <div class='flex flex-col mb-[2rem]'>
           <span class='text-[12px] mb-[0.5rem]'>Website</span>
           <input
-            class='rounded-xl border-2 border-solid border-light_gray'
+            class='rounded-xl border-2 border-solid border-neutral-300'
             placeholder='Add a link to drive traffic to your site'
             name='website'
             type='text'
@@ -395,7 +395,7 @@ const Profile = () => {
 
         <div>
           <Button
-            background={'bg-lightest_gray'}
+            background={'bg-neutral-200'}
             hover={'hover:bg-red hover:text-white'}
             onClickAction={handleOnClick}
             classes={'py-[12px] px-[1rem] min-h-[48px] min-w-[60px] outline-0 mt-[1rem]'}

@@ -1,146 +1,17 @@
-import React, { Fragment, useState, useRef, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React, { Fragment, useState, useEffect } from 'react';
 import { useAuthState } from '../firebase/config';
-import Modal from './UI/Modal';
 import Marquee from 'react-fast-marquee';
 import { css } from '@emotion/react';
 import HashLoader from 'react-spinners/HashLoader';
 import _ from 'lodash';
-import AddIcon from './UI/Icons/AddIcon';
-import SaveToBoard from './UI/SaveToBoard';
-
-// This component renders each individual pin.
-
-const PinCard = (props) => {
-  const location = useLocation();
-  const [hover, setHover] = useState(false);
-  const { users, pins } = useAuthState();
-  const [toggleModal, setToggleModal] = useState(false);
-  const imageRef = useRef();
-  const pinContainer = useRef();
-
-  // These functions handle the state which toggles pin view modal.
-
-  const handleImageHover = () => {
-    setHover(true);
-  };
-
-  const openModal = () => {
-    setToggleModal(true);
-  };
-
-  const closeModal = () => {
-    setToggleModal(false);
-  };
-
-  /* 
-
-  This logic creates an array (for loop) with indexes from the pins array that changes the height
-  of certain pins in the grid/gallery.
-
-  */
-
-  var arr = [];
-  var dividingVal = 3;
-  var calculation = Math.floor(pins.length / dividingVal);
-
-  for (let i = 0; i < pins.length; i = i + calculation) {
-    arr.push(i);
-  }
-
-  // If pin's index is included in the array the pin's height is changed.
-
-  let isInArray = arr.includes(props.index);
-
-  /* 
-  
-  A div is returned with pin and author/title below it. Hover state is also 
-  implemented for each pen which allows user to save pin to one of their boards.
-  
-  */
-
-  return (
-    <div
-      ref={pinContainer}
-      class='relative w-full mb-[25px]  break-inside-avoid '
-      onMouseOver={handleImageHover}
-      onMouseLeave={() => setHover(false)}
-    >
-      <div class='relative'>
-        {hover && (
-          <div>
-            <div class='absolute z-20 w-[4.5rem] flex h-[2rem] left-[80%] h-[4rem]  px-[15px]'>
-              <div class='flex flex-col py-[1rem] z-20 pr-[1rem]'>
-                <button onClick={openModal} class='bg-gray-900/50 rounded-full p-[0.2rem]'>
-                  {' '}
-                  <AddIcon fill={'white'} classes={'w-4 h-4'} />
-                </button>
-              </div>
-            </div>
-            <Link to={`view/pin/${props?.pin.id}`} style={{ cursor: 'zoom-in' }} state={{ background: location }}>
-              <div
-                style={{ height: `${imageRef.current.height + 'px'}` }}
-                class={`absolute z-10 bg-gray-900/50 rounded-xl inset-0 inline-block`}
-              ></div>
-            </Link>
-          </div>
-        )}
-
-        <div class={`relative`}>
-          <img
-            ref={imageRef}
-            src={props.pin?.img_url}
-            alt='pin'
-            class={`max-h-full object-cover object-center box-content max-w-full rounded-xl ${isInArray === true && 'h-[600px]'}`}
-          />
-          <div class='flex mt-[25px]'>
-            <div class='w-full flex items-center'>
-              <div class='flex  items-center w-[75%]'>
-                <img class='w-[20px] h-[20px] rounded-full' src={users?.filter((usr) => usr.uid === props.pin.author)[0].photoURL} />
-                <p class='font-[500] text-[14px] ml-[7px] tracking-normal'>{props?.pin?.title}</p>
-              </div>
-              {/* <div class='w-[24%] flex items-center justify-between'>
-                <span class='flex items-center font-bold text-[12px]'>
-                  <HeartOutlineIcon stroke={'#000000'} fill={'#000000'} classes={'w-4 h-4 '} />
-                </span>
-                <span onClick={openModal} class='flex items-center font-bold text-[12px] cursor-pointer '>
-                  <AddSolidIcon classes={'w-3 h-3  fill-[#000000]'} />
-                </span>
-                <span onClick={openModal} class='flex items-center font-bold text-[12px] cursor-pointer '>
-                  <SendIcon classes={'w-4 h-4  fill-[#000000]'} />
-                </span>
-              </div> */}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div>
-        <Modal isOpen={toggleModal} closeModal={closeModal} openModal={openModal} title={'Save To Board'} modalHeight={'h-[65vh]'}>
-          <SaveToBoard id={props.pin.id} />
-        </Modal>
-      </div>
-    </div>
-  );
-};
-
-// This component renders the pin gallery 'masonry' grid with columns.
-
-const PinList = (props) => {
-  const images = props.pins?.map((pin, i) => {
-    return <PinCard key={i} pin={pin} index={i} />;
-  });
-
-  return <div class='columns-5 gap-[25px] inline-block '>{images}</div>;
-};
-
-// This component renders the marquee and pin gallery.
+import PinList from './UI/PinList';
 
 const PinBoard = () => {
   /*
 
 All pin data, current user data, and current user's following is fetched from Context.
 A new state hook is created to store pins data to be displayed.
+
 */
 
   const { pins, userFollowing, user, currSearch } = useAuthState();
@@ -149,10 +20,9 @@ A new state hook is created to store pins data to be displayed.
   // This logic combines the user's pins with the user's pins they follow
 
   useEffect(() => {
-    const following_pins = userFollowing.filter((usr) => usr.user).map((id) => id.user);
-    following_pins.push(user?.uid);
+    const following_pins = userFollowing?.filter((usr) => usr.user).map((id) => id.user);
+    following_pins?.push(user?.uid);
     setFollowingPins(following_pins);
-    console.log(following_pins);
   }, []);
 
   const filtered_pins = pins?.filter((item) => {
@@ -161,7 +31,7 @@ A new state hook is created to store pins data to be displayed.
 
   return (
     <Fragment>
-      <TrendingTags />
+      {/* <TrendingTags /> */}
       {filtered_pins?.length === 0 ? (
         <div class='flex w-full items-center justify-center h-full'>
           <div class='flex w-[90%] items-center justify-center h-[89vh]'>
@@ -246,8 +116,8 @@ const Gallery = () => {
   // If loading state is true, the loader animation is displayed, if not the gallery is displayed.
 
   return (
-    <div class='w-[95%] m-0'>
-      <div>{loading === true ? <Loading /> : <PinBoard />}</div>
+    <div class='w-full mb-[10rem] flex items-center justify-center'>
+      <div class='w-[97%]'>{loading === true ? <Loading /> : <PinBoard />}</div>
     </div>
   );
 };

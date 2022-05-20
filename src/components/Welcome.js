@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useId } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { db, signup, signin } from '../firebase/config';
+import { db, signup, signin, useAuthState } from '../firebase/config';
 import { doc, setDoc, Timestamp } from 'firebase/firestore';
 import CircleIcon from '@mui/icons-material/Circle';
 
@@ -10,6 +10,7 @@ const Welcome = () => {
   let from = location.state?.from?.pathname || '/';
   const [toggleSignIn, setToggleSignIn] = useState();
   const [userCreated, setUserCreated] = useState(false);
+  const createId = useId();
 
   const [createUser, setCreateUser] = useState({
     id: '',
@@ -35,7 +36,7 @@ const Welcome = () => {
         name: '',
         photoURL: '',
         tagline: '',
-        uid: '',
+        uid: user?.uid,
         website: '',
       });
 
@@ -193,6 +194,8 @@ const Welcome = () => {
 };
 
 const SignIn = ({ toggle }) => {
+  const { isAuthenticated } = useAuthState();
+  console.log(isAuthenticated);
   let navigate = useNavigate();
   let location = useLocation();
 

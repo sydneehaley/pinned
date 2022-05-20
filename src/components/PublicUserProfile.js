@@ -1,21 +1,22 @@
-import React, { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import { collection, onSnapshot, query, where } from "firebase/firestore";
-import { db, useAuthState } from "../firebase/config";
-import _ from "lodash";
-import Button from "./UI/Button";
-import Modal from "./UI/Modal";
-import ImageIcon from "./UI/Icons/ImageIcon";
-import Pin from "./UI/Pin";
-import PinList from "./UI/PinList";
-import MultiplePinsIcon from "./UI/Icons/MultiplePinsIcons";
-import ProfileHeader from "./UI/ProfileHeader";
+import React, { useEffect, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import { collection, onSnapshot, query, where } from 'firebase/firestore';
+import { db, useAuthState } from '../firebase/config';
+import _ from 'lodash';
+import Button from './UI/Button';
+import Modal from './UI/Modal';
+
+import Pin from './UI/Pin';
+import PinList from './UI/PinList';
+import MultiplePinsIcon from './UI/Icons/MultiplePinsIcons';
+import ProfileHeader from './UI/ProfileHeader';
+import UserProfileBoards from './UI/UserProfileBoards';
 
 const PublicUserProfile = (props) => {
   //location path values
   const location = useLocation();
-  const username = location.pathname.replace("/", "");
+  const username = location.pathname.replace('/', '');
 
   //state values
   const { user, users, userFollowers, userFollowing } = useAuthState();
@@ -35,21 +36,22 @@ const PublicUserProfile = (props) => {
   useEffect(() => {
     setLoading(true);
     // storing profile's user data to state
-    const data = users.filter((usr) => usr.displayName === username);
+    const data = users?.filter((usr) => usr?.displayName === username);
 
-    const profile_id = data[0].uid;
+    const profile_id = data[0]?.uid;
+
     if (users.length !== 0) {
       setId(profile_id);
       setProfile(data);
-      console.log("data loaded");
+      console.log('data loaded');
       setLoading(false);
     } else {
-      console.log("error loading data");
+      console.log('error loading data');
     }
 
-    const userFollowingRef = collection(db, "public_users", `${profile_id}`, "following");
+    const userFollowingRef = collection(db, 'public_users', `${user?.uid}`, 'following');
 
-    const q_user_following = query(userFollowingRef, where("type", "==", "following"));
+    const q_user_following = query(userFollowingRef, where('type', '==', 'following'));
 
     onSnapshot(q_user_following, (querySnapshot) => {
       const user_following = [];
@@ -65,8 +67,8 @@ const PublicUserProfile = (props) => {
       }
     });
 
-    const userFollowersRef = collection(db, "public_users", `${profile_id}`, "followers");
-    const q_user_followers = query(userFollowersRef, where("type", "==", "follower"));
+    const userFollowersRef = collection(db, 'public_users', `${user?.uid}`, 'followers');
+    const q_user_followers = query(userFollowersRef, where('type', '==', 'follower'));
 
     onSnapshot(q_user_followers, (querySnapshot) => {
       const user_followers = [];
@@ -108,9 +110,9 @@ const PublicUserProfile = (props) => {
   };
 
   return (
-    <div class='w-[95%] flex flex-col items-center mt-[2rem]'>
+    <div class='w-full flex flex-col items-center mt-[4rem]'>
       {profile?.map((usr) => (
-        <div class='w-full flex flex-col'>
+        <div class='w-[97%] flex flex-col'>
           <ProfileHeader
             followersCount={followersCount}
             followingCount={followingCount}
@@ -120,11 +122,14 @@ const PublicUserProfile = (props) => {
             usr={usr}
             verifyFollowing={verifyFollowing}
           />
-          <div>
-            <Modal isOpen={toggleModal} closeModal={closeModal} openModal={openModal} title={showFollowers === true ? "Followers" : "Following"}>
-              {showFollowers ? <FollowersList id={id} followers={followers} users={users} /> : showFollowing ? <FollowingList id={id} following={following} users={users} /> : null}
-            </Modal>
-          </div>
+
+          <Modal isOpen={toggleModal} closeModal={closeModal} openModal={openModal} title={showFollowers === true ? 'Followers' : 'Following'}>
+            {showFollowers ? (
+              <FollowersList id={id} followers={followers} users={users} />
+            ) : showFollowing ? (
+              <FollowingList id={id} following={following} users={users} />
+            ) : null}
+          </Modal>
 
           <div class='flex items-start w-full'>
             <UserContent user={user} id={id} />
@@ -151,7 +156,10 @@ const FollowersList = ({ followers, users }) => {
               <div class='w-full flex items-center justify-center h-[7rem]'>
                 <div class='flex items-center leading-4 w-[90%]' key={i}>
                   <div>
-                    <img class='w-[50px] h-[50px] rounded-full' src={users?.filter((usr) => usr?.uid === profile?.user).map((usr) => usr?.photoURL)} />
+                    <img
+                      class='w-[50px] h-[50px] rounded-full'
+                      src={users?.filter((usr) => usr?.uid === profile?.user).map((usr) => usr?.photoURL)}
+                    />
                   </div>
                   <div class='font-bold ml-[10px]'>
                     <h6 class='font-bold'>{users?.filter((usr) => usr?.uid === profile?.user).map((usr) => usr?.name)}</h6>
@@ -159,7 +167,12 @@ const FollowersList = ({ followers, users }) => {
                   </div>
                 </div>
                 <div>
-                  <Button background={"bg-lightest_gray"} color={"text-black"} hover={"hover:bg-black hover:text-white"} classes={"py-[12px] px-[1rem] min-h-[48px] min-w-[60px] outline-0"}>
+                  <Button
+                    background={'bg-lightest_gray'}
+                    color={'text-black'}
+                    hover={'hover:bg-black hover:text-white'}
+                    classes={'py-[12px] px-[1rem] min-h-[48px] min-w-[60px] outline-0'}
+                  >
                     Unfollow
                   </Button>
                 </div>
@@ -188,7 +201,10 @@ const FollowingList = ({ following, users }) => {
               <div class='w-full flex items-center justify-center h-[7rem]'>
                 <div class='flex items-center leading-4 w-[90%]' key={i}>
                   <div>
-                    <img class='w-[50px] h-[50px] rounded-full' src={users?.filter((usr) => usr?.uid === profile?.user).map((usr) => usr?.photoURL)} />
+                    <img
+                      class='w-[50px] h-[50px] rounded-full'
+                      src={users?.filter((usr) => usr?.uid === profile?.user).map((usr) => usr?.photoURL)}
+                    />
                   </div>
                   <div class='font-bold ml-[10px]'>
                     <h6 class='font-bold'>{users?.filter((usr) => usr?.uid === profile?.user).map((usr) => usr?.name)}</h6>
@@ -196,7 +212,12 @@ const FollowingList = ({ following, users }) => {
                   </div>
                 </div>
                 <div>
-                  <Button background={"bg-lightest_gray"} color={"text-black"} hover={"hover:bg-black hover:text-white"} classes={"py-[12px] px-[1rem] min-h-[48px] min-w-[60px] outline-0"}>
+                  <Button
+                    background={'bg-lightest_gray'}
+                    color={'text-black'}
+                    hover={'hover:bg-black hover:text-white'}
+                    classes={'py-[12px] px-[1rem] min-h-[48px] min-w-[60px] outline-0'}
+                  >
                     Unfollow
                   </Button>
                 </div>
@@ -246,27 +267,9 @@ const UserContent = ({ id }) => {
   }, []);
 
   return (
-    <div class='w-full flex items-start justify-start'>
+    <div class='w-full'>
       {isAuthenticated ? (
-        <div class='w-[95%] flex flex-col items-start justify-start'>
-          <div class='w-full columns-auto gap-[20px] flex'>
-            {profileBoards?.map((board) => (
-              <div>
-                <Link to={`/boards/${board?.id}/${board?.title}`} style={{ cursor: "zoom-in" }}>
-                  {profilePins?.filter((img) => img?.board === board?.title).length === 0 ? (
-                    <div class='bg-lightest_gray  h-[11rem] rounded-md flex items-center justify-center'>
-                      <ImageIcon classes={"w-8 h-8"} fill={"#767676"} />
-                    </div>
-                  ) : (
-                    <img class=' h-[11rem] rounded-md rounded-xl object-cover' src={profilePins?.filter((img) => img?.board === board?.title)[0]?.img_url} />
-                  )}
-                </Link>
-                <h6 class='font-bold mt-[1rem]'>{board?.title}</h6>
-                <span class='text-[12px]'>{profilePins.filter((boards) => boards?.board === board?.title).length} pins</span>
-              </div>
-            ))}
-          </div>
-        </div>
+        <UserProfileBoards boards={profileBoards} pins={pins} />
       ) : (
         <div>
           <PinBoard pins={profilePins} />

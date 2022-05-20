@@ -1,19 +1,11 @@
-import React, { useState, useEffect, useRef, Fragment } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import _ from 'lodash';
-import { Listbox, Transition, Switch } from '@headlessui/react';
 import DotLoader from 'react-spinners/DotLoader';
-import BoardsMenu from './BoardsMenu';
 import AddIcon from './Icons/AddIcon';
-import ArrowLeft from './Icons/ArrowLeft';
-import ArrowRight from './Icons/ArrowRight';
-import { db, useAuthState } from '../../firebase/config';
+import { useAuthState } from '../../firebase/config';
 import { css } from '@emotion/react';
-import ChevronDownIcon from './Icons/ChevronDownIcon';
-import { CheckIcon, SelectorIcon } from '@heroicons/react/solid';
-import SearchIcon from './Icons/SearchIcon';
 import Button from './Button';
-import { doc, updateDoc, onSnapshot } from 'firebase/firestore';
 
 export default function CreatePublishEditForm({
   formTitle,
@@ -33,8 +25,7 @@ export default function CreatePublishEditForm({
   loader,
   boards,
 }) {
-  const location = useLocation();
-  const { user } = useAuthState();
+  const { user, users } = useAuthState();
   const [errorMsg, setErrorMsg] = useState('');
   const [showLabel, setShowLabel] = useState(true);
   const [toggleAlt, setToggleAlt] = useState(false);
@@ -50,16 +41,14 @@ export default function CreatePublishEditForm({
 
   useEffect(() => {}, []);
 
-  const uploadPinPath = 'create/upload/pin';
-
   const toggleField = () => {
     setToggleAlt(true);
   };
 
   return (
-    <div class='w-full h-[100vh] flex  items-center justify-center bg-neutral-200'>
-      <div class='flex flex-form_side  w-full items-center justify-center'></div>
-      <div class='w-full h-[75vh] flex flex-col flex-form_middle basis-[17%] items-center justify-center'>
+    <div class='w-full h-[100vh] flex justify-center bg-neutral-200'>
+      <div class='flex flex-form_side w-full'></div>
+      <div class='w-full h-[75vh] flex flex-col flex-form_middle basis-[17%] mt-[4rem] justify-center'>
         {/* Middle Container */}
         <div class='flex items-center justify-start w-full mb-[1rem]'>
           <h1 class='font-bold text-2xl'>{formTitle}</h1>
@@ -102,7 +91,7 @@ export default function CreatePublishEditForm({
             <div class='flex flex-col flex-1  items-end w-full pb-[1rem]'>
               <div class='flex w-full justify-end items-center'>
                 <div class='h-[40px] pt-[3rem] pb-[4rem] flex items-center justify-center min-w-[12rem]'>
-                  <div>{children}</div>{' '}
+                  <div>{children}</div>
                   <div>
                     <button
                       type='submit'
@@ -140,7 +129,7 @@ export default function CreatePublishEditForm({
                   <div class='flex items-center pt-[2rem] pb-[1rem]'>
                     <img class='w-[50px] h-[50px] rounded-full  p-[2px]' src={user?.photoURL} />
 
-                    <h6 class='ml-3 font-bold ml-[5px] mb-0 mr-0 mt-0'>{user?.displayName}</h6>
+                    <h6 class='ml-3 font-bold ml-[5px] mb-0 mr-0 mt-0'>{users?.filter((usr) => usr.uid === user?.uid)[0]?.name}</h6>
                   </div>
                 </div>
 
@@ -196,7 +185,7 @@ export default function CreatePublishEditForm({
           </div>
         </div>
       </div>
-      <div class='flex flex-form_side w-full items-center justify-center'>{/* <ArrowRight stroke={'black'} classes={'w-6 h-6'} /> */}</div>
+      <div class='flex flex-form_side w-full items-center justify-center'></div>
     </div>
   );
 }

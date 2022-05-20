@@ -1,4 +1,4 @@
-import { Dialog, Transition } from '@headlessui/react';
+import { Dialog, Transition, Listbox } from '@headlessui/react';
 import { Fragment, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { updateDoc, doc, deleteDoc, collection, onSnapshot, setDoc } from 'firebase/firestore';
@@ -7,7 +7,7 @@ import { useAuthState } from '../firebase/config';
 import { db } from '../firebase/config';
 import Modal from './UI/Modal';
 import Button from './UI/Button';
-import BoardsMenu from './UI/BoardsMenu';
+import BoardsMenuModal from './UI/BoardsMenuModal';
 import ShareIcon from './UI/Icons/ShareIcon';
 import HeartOutlineIcon from './UI/Icons/HeartOutlineIcon';
 import MoreIcon from './UI/Icons/MoreIcon';
@@ -177,7 +177,7 @@ export default function PinViewModal({ classes }) {
                 {pins
                   ?.filter((pin, i) => pin.id === id)
                   .map((pin, i) => (
-                    <div class='w-full flex shadow-xl rounded-2xl'>
+                    <div key={pin?.id} class='w-full flex shadow-xl rounded-2xl'>
                       <div class='w-[50%] flex h-[70vh]'>
                         <img class='rounded-tl-2xl rounded-bl-2xl object-cover w-full' src={pin?.img_url} />
                       </div>
@@ -209,7 +209,7 @@ export default function PinViewModal({ classes }) {
                           </div>
                           <div class={`w-[83%] flex justify-end items-center`}>
                             <div class='mr-[10px]'>
-                              <BoardsMenu id={id} buttonClasses={'text-neutral-700'} iconStroke={'stroke-neutral-700'} />
+                              <BoardsMenuModal id={id} buttonClasses={'text-neutral-700'} iconStroke={'stroke-neutral-700'} />
                             </div>
 
                             {editPin === true && (

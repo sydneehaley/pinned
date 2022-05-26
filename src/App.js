@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Fragment } from 'react';
 import { Route, Routes, useLocation, Navigate, Outlet } from 'react-router-dom';
 import _ from 'lodash';
 import Navbar from './components/Navbar';
 import FooterNavbar from './components/FooterNavbar';
 import Welcome from './components/Welcome';
-import Layout from './components/Layout';
+import Modal from './components/UI/Modal';
+import CreateBoard from './components/CreateBoard';
 import Gallery from './components/Gallery';
 import Board from './components/Board';
 import UserProfile from './components/UserProfile';
@@ -17,7 +18,7 @@ import DeletePin from './components/DeletePin';
 import Settings from './components/Settings';
 import SearchResults from './components/SearchResults';
 import Error from './components/Error';
-import Featured from './components/Featured';
+import Stories from './components/Stories';
 import { useAuthState } from './firebase/config';
 
 // This component protects specific routes from the public.
@@ -32,14 +33,16 @@ const ProtectedRoute = ({ children }) => {
 const App = () => {
   const [loading, setLoading] = useState(true);
   const [showNavbar, setShowNavbar] = useState(true);
-
+  const [toggleModal, setToggleModal] = useState(false);
   const { user } = useAuthState();
 
   useEffect(() => {
     console.log(loading);
     console.log('app loading...');
 
-    if (user !== undefined || user === undefined) {
+    const emptyUser = user === undefined;
+
+    if (user !== undefined || emptyUser === false) {
       console.log('data loaded');
 
       setTimeout(() => {
@@ -59,6 +62,14 @@ const App = () => {
 
   let location = useLocation();
   let background = location.state && location.state.background;
+
+  const openModal = () => {
+    setToggleModal(true);
+  };
+
+  const closeModal = () => {
+    setToggleModal(false);
+  };
 
   /* 
 
@@ -93,7 +104,7 @@ view and the search results view.
 
             <Route path='/*' element={<ProtectedRoute />}>
               <Route path='' element={<Gallery />} />
-              <Route path='featured' element={<Featured />} />
+              <Route path='stories' element={<Stories />} />
               <Route exact path='delete/pin/:id' element={<DeletePin />} />
               <Route exact path='settings' element={<Settings />} />
               <Route exact path='view/pin/:id' element={<PinView />} />
@@ -122,6 +133,16 @@ view and the search results view.
             </Routes>
           )}
           {showNavbar === true && <FooterNavbar />}
+
+          <Fragment>
+            <div>
+              <FooterNavbar openModal={openModal} />
+
+              <Modal isOpen={toggleModal} closeModal={closeModal} openModal={openModal} title={'Create Board'} modalHeight={'h-[30vh]'}>
+                <CreateBoard landing={'/'} />
+              </Modal>
+            </div>
+          </Fragment>
         </div>
       )}{' '}
     </div>

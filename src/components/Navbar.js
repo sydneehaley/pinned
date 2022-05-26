@@ -20,8 +20,6 @@ const Navbar = () => {
   const [query, setQuery] = useState('');
   const [toggleSearch, setToggleSearch] = useState(false);
 
-  console.log(user.uid);
-
   const handleOnChange = (e) => {
     e.preventDefault();
     setQuery(e.target.value);
@@ -80,7 +78,7 @@ const Navbar = () => {
       {location.pathname == '/signup' ? (
         <nav></nav>
       ) : (
-        <nav class='w-full h-[11vh] flex items-center justify-center'>
+        <nav class='w-full h-[11vh] flex items-center justify-center  bg-white'>
           <div class='flex w-[97%] items-center justify-center'>
             <div class='mr-[1rem]'>
               <div class='flex items-center justify-start'>
@@ -101,12 +99,12 @@ const Navbar = () => {
                   </li>
                   <li
                     class={
-                      location?.pathname === '/featured'
+                      location?.pathname === '/stories'
                         ? 'bg-black text-white py-[12px] px-[1rem] min-h-[48px] min-w-[60px] outline-0  rounded-full flex items-center justify-center'
                         : null
                     }
                   >
-                    <NavLink to='/featured'>Today</NavLink>
+                    <NavLink to='/stories'>Today</NavLink>
                   </li>
                 </ul>
               </div>

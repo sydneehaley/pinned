@@ -47,7 +47,7 @@ const ProfileHeader = ({ usr, followersCount, followingCount, handleFollowers, h
             {isCurrentUser === true ? (
               <Link to='/settings'>
                 <Button
-                  background={`${verifyFollowing === true ? 'bg-red' : 'bg-lightest_gray'}`}
+                  background={`${verifyFollowing === true ? 'bg-red' : 'bg-neutral-200'}`}
                   hover={'hover:bg-black hover:text-white'}
                   color={`${verifyFollowing === true ? 'text-white' : 'text-black'}`}
                   classes={'py-[12px] px-[1rem] min-h-[48px] min-w-[60px] outline-0'}

@@ -7,7 +7,7 @@ import { useAuthState } from '../firebase/config';
 import { db } from '../firebase/config';
 import Modal from './UI/Modal';
 import Button from './UI/Button';
-import BoardsMenu from './UI/BoardsMenu';
+import BoardsMenuModal from './UI/BoardsMenuModal';
 import ShareIcon from './UI/Icons/ShareIcon';
 import HeartOutlineIcon from './UI/Icons/HeartOutlineIcon';
 import MoreIcon from './UI/Icons/MoreIcon';
@@ -210,7 +210,7 @@ export default function PinViewModalSearch({ classes }) {
                           </div>
                           <div class={`w-[83%] flex justify-end items-center`}>
                             <div class='mr-[10px]'>
-                              <BoardsMenu id={id} buttonClasses={'text-neutral-700'} iconStroke={'stroke-neutral-700'} />
+                              <BoardsMenuModal id={id} buttonClasses={'text-neutral-700'} iconStroke={'stroke-neutral-700'} />
                             </div>
 
                             {editPin === true && (

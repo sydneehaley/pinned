@@ -7,16 +7,20 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { AuthContextProvider, useAuthState } from './firebase/config';
 import { BrowserRouter, Route, Routes, useLocation, Navigate } from 'react-router-dom';
+import { createRoot } from 'react-dom/client';
+import Navbar from './components/Navbar.js';
 
-ReactDOM.render(
+const container = document.getElementById('root');
+const root = createRoot(container);
+
+root.render(
   <Provider store={store}>
-    <AuthContextProvider>
-      <BrowserRouter>
+    <BrowserRouter>
+      <AuthContextProvider>
         <App />
-      </BrowserRouter>
-    </AuthContextProvider>
-  </Provider>,
-  document.getElementById('root')
+      </AuthContextProvider>
+    </BrowserRouter>
+  </Provider>
 );
 
 // If you want to start measuring performance in your app, pass a function

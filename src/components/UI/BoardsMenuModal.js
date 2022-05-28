@@ -15,7 +15,7 @@ import CreateBoard from '../CreateBoard';
 import ImageIcon from './Icons/ImageIcon';
 // const people = [{ name: 'Photography' }, { name: 'Dogs' }, { name: 'Fashion' }, { name: 'Cats' }, { name: 'Tanya Fox' }, { name: 'Hellen Schmidt' }];
 
-const BoardsMenu = ({ id, buttonClasses, iconStroke }) => {
+const BoardsMenuModal = ({ id, buttonClasses, iconStroke }) => {
   const [boards, setBoard] = useState();
   const { pins, user, userBoards, userPins, userSavedPins } = useAuthState();
   const [selected, setSelected] = useState();
@@ -130,14 +130,15 @@ const BoardsMenu = ({ id, buttonClasses, iconStroke }) => {
     <Listbox value={selected} onChange={handleBoardChange} as='div'>
       <div className='relative m-0'>
         <div class='relative flex w-full justify-end items-end'>
-          <Listbox.Button className='bg-neutral-200 px-[14px] max-w-[10rem] min-w-[10rem] max-h-[40px] rounded-tl-lg rounded-bl-lg w-full py-[14px] cursor-default flex items-center focus:outline-0'>
-            <span class='font-bold text-neutral-600 w-1/2 flex justify-start'>{selected?.board || selected?.savedToMyBoard || selected?.title}</span>
-            <span class='w-1/2 flex justify-end'>
-              <ChevronDownIcon fill={'none'} classes={'text-medium_gray w-4 h-4 stroke-neutral-600 '} />
+          <Listbox.Button className=' max-h-[40px] rounded-tl-lg rounded-bl-lg  py-[14px] cursor-pointer flex items-center focus:outline-0'>
+            <span class={`font-bold  ${buttonClasses}  flex justify-end pr-[10px]`}>
+              {selected?.board || selected?.savedToMyBoard || selected?.title}
+            </span>
+            <span class=' flex justify-end'>
+              <ChevronDownIcon fill={'none'} classes={`text-medium_gray w-4 h-4 ${iconStroke}`} />
             </span>
           </Listbox.Button>
         </div>
-
         <Transition as={Fragment} leave='transition ease-in duration-100' leaveFrom='opacity-100' leaveTo='opacity-0'>
           <Listbox.Options
             className='absolute w-[18rem] -left-[220px] p-0 mt-[1rem] overflow-auto text-base bg-white  rounded-md shadow-lg h-[22rem] ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm'
@@ -235,13 +236,14 @@ const BoardsMenu = ({ id, buttonClasses, iconStroke }) => {
             </div>
           </Listbox.Options>
         </Transition>
-
-        <Modal isOpen={toggleModal} closeModal={closeModal} openModal={openModal} title={'Create Board'} modalHeight={'h-[30vh]'}>
-          <CreateBoard />
-        </Modal>
+        <div>
+          <Modal isOpen={toggleModal} closeModal={closeModal} openModal={openModal} title={'Create Board'} modalHeight={'h-[30vh]'}>
+            <CreateBoard />
+          </Modal>
+        </div>
       </div>
     </Listbox>
   );
 };
 
-export default BoardsMenu;
+export default BoardsMenuModal;

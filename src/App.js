@@ -1,65 +1,75 @@
-import React from 'react';
-import { Route, Routes, useLocation, Navigate, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState, Fragment } from 'react';
+import { Route, Routes, useLocation, Navigate, Outlet } from 'react-router-dom';
 import _ from 'lodash';
+import Navbar from './components/Navbar';
+import FooterNavbar from './components/FooterNavbar';
 import Welcome from './components/Welcome';
-import Layout from './components/Layout';
+import Modal from './components/UI/Modal';
+import CreateBoard from './components/CreateBoard';
 import Gallery from './components/Gallery';
 import Board from './components/Board';
 import UserProfile from './components/UserProfile';
 import PublicUserProfile from './components/PublicUserProfile';
 import CreatePin from './components/CreatePin';
-import CreateBoard from './components/CreateBoard';
-import EditBoard from './components/EditBoard';
 import PinView from './components/PinView';
 import PinViewModalSearch from './components/PinViewModalSearch';
 import PinViewModal from './components/PinViewModal';
-import EditPin from './components/EditPin';
 import DeletePin from './components/DeletePin';
 import Settings from './components/Settings';
 import SearchResults from './components/SearchResults';
 import Error from './components/Error';
-import Featured from './components/Featured';
-import Modal from './components/UI/Modal';
+import Stories from './components/Stories';
 import { useAuthState } from './firebase/config';
 
 // This component protects specific routes from the public.
 
 const ProtectedRoute = ({ children }) => {
-  let location = useLocation();
-  const { isAuthenticated } = useAuthState();
+  const { pathname } = useLocation();
+  const { user } = useAuthState();
 
-  /* 
-
-If user is authenticated, route is displayed. Previous location is stored
-in location state so user can return to route they were at before logging in 
-
-*/
-
-  if (!isAuthenticated) {
-    return <Navigate to='/signup' state={{ from: location }} replace />;
-  }
-
-  // Children prop returns all routes nested under Protected Route component
-
-  return children;
+  return user === undefined ? <Navigate to='/signup' state={{ from: pathname }} replace /> : <Outlet />;
 };
 
-// This component contains Routes wrapper component for the app's routes.
-
 const App = () => {
-  // This variable gets all users data from context component from the custom app state hook.
+  const [loading, setLoading] = useState(true);
+  const [showNavbar, setShowNavbar] = useState(true);
+  const [toggleModal, setToggleModal] = useState(false);
+  const { user } = useAuthState();
 
-  const { users } = useAuthState();
+  useEffect(() => {
+    console.log(loading);
+    console.log('app loading...');
 
-  /* 
+    const emptyUser = user === undefined;
 
-Variables created for useLocation hook (React Router) and for background location state. 
-The background location is need to display content in a modal view that sets a background location/view.
+    if (user !== undefined || emptyUser === false) {
+      console.log('data loaded');
 
-*/
+      setTimeout(() => {
+        setLoading(false);
+        console.log('app loaded');
+      }, 500);
+    }
+
+    if (location !== null) {
+      if (location.pathname == '/signup') {
+        setShowNavbar(false);
+      }
+    }
+
+    console.log(showNavbar);
+  }, [user]);
 
   let location = useLocation();
   let background = location.state && location.state.background;
+
+  const openModal = () => {
+    setToggleModal(true);
+  };
+
+  const closeModal = () => {
+    setToggleModal(false);
+  };
 
   /* 
 
@@ -80,167 +90,61 @@ view and the search results view.
 
   return (
     <div>
-      <Routes location={background || location}>
-        <Route exact path='/signup' element={<Welcome />} />
-        <Route element={<Layout />}>
-          <Route
-            exact
-            path='/'
-            element={
-              <ProtectedRoute>
-                <Gallery />
-              </ProtectedRoute>
-            }
-          ></Route>
-          <Route
-            path='/featured'
-            element={
-              <ProtectedRoute>
-                <Featured />
-              </ProtectedRoute>
-            }
-          ></Route>
+      {loading === true ? (
+        <div></div>
+      ) : (
+        <div>
+          <Navbar />
+          <Routes location={background || location}>
+            <Route path='/signup' element={<Welcome />} />
 
-          <Route
-            exact
-            path='/delete/pin/:id'
-            element={
-              <ProtectedRoute>
-                <DeletePin />
-              </ProtectedRoute>
-            }
-          ></Route>
-          <Route
-            exact
-            path='/settings'
-            element={
-              <ProtectedRoute>
-                <Settings />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            exact
-            path='/view/pin/:id'
-            element={
-              <ProtectedRoute>
-                <PinView />
-              </ProtectedRoute>
-            }
-          />
+            {/* {users?.map((user) => (
+            <Route exact path={'/' + user.displayName} element={<div>Public profile</div>} />
+          ))} */}
 
-          <Route
-            exact
-            path='/search/view/pin/:id'
-            element={
-              <ProtectedRoute>
-                <PinView />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            exact
-            path='/edit/pin/:id'
-            element={
-              <ProtectedRoute>
-                <EditPin />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            exact
-            path='/create/pin'
-            element={
-              <ProtectedRoute>
-                <CreatePin />
-              </ProtectedRoute>
-            }
-          />
+            <Route path='/*' element={<ProtectedRoute />}>
+              <Route path='' element={<Gallery />} />
+              <Route path='stories' element={<Stories />} />
+              <Route exact path='delete/pin/:id' element={<DeletePin />} />
+              <Route exact path='settings' element={<Settings />} />
+              <Route exact path='view/pin/:id' element={<PinView />} />
+              <Route exact path='search/view/pin/:id' element={<PinView />} />
+              <Route exact path='create/pin' element={<CreatePin />} />
+              <Route exact path='profile' element={<UserProfile />} />
+              <Route path='boards/:id' element={<Board />} />
+              <Route path='search/*' element={<SearchResults />} />
+              <Route path='*' element={<Error />} />
+            </Route>
+          </Routes>
 
-          <Route
-            exact
-            path='/create/board'
-            element={
-              <ProtectedRoute>
-                <CreateBoard />
-              </ProtectedRoute>
-            }
-          />
+          {background && (
+            <Routes>
+              <Route path='/*' element={<ProtectedRoute />}>
+                <Route path='search/view/pin/:id' element={<PinViewModalSearch />} />
+              </Route>
+            </Routes>
+          )}
 
-          <Route
-            exact
-            path='/edit/board/:id'
-            element={
-              <ProtectedRoute>
-                <EditBoard />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            exact
-            path='/myprofile'
-            element={
-              <ProtectedRoute>
-                <UserProfile />
-              </ProtectedRoute>
-            }
-          />
-          {users?.map((user) => (
-            <Route exact path={'/' + user.displayName} element={<PublicUserProfile />} />
-          ))}
+          {background && (
+            <Routes>
+              <Route path='/*' element={<ProtectedRoute />}>
+                <Route path='view/pin/:id' element={<PinViewModal />} />
+              </Route>
+            </Routes>
+          )}
+          {showNavbar === true && <FooterNavbar />}
 
-          <Route
-            path='/boards/:id/:title'
-            element={
-              <ProtectedRoute>
-                <Board />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path='/search/*'
-            element={
-              <ProtectedRoute>
-                <SearchResults />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path='*'
-            element={
-              <ProtectedRoute>
-                <Error />
-              </ProtectedRoute>
-            }
-          />
-        </Route>
-      </Routes>
+          <Fragment>
+            <div>
+              <FooterNavbar openModal={openModal} />
 
-      {background && (
-        <Routes>
-          <Route
-            path='/search/view/pin/:id'
-            element={
-              <ProtectedRoute>
-                <PinViewModalSearch />
-              </ProtectedRoute>
-            }
-          />
-        </Routes>
-      )}
-
-      {background && (
-        <Routes>
-          <Route
-            path='/view/pin/:id'
-            element={
-              <ProtectedRoute>
-                <PinViewModal />
-              </ProtectedRoute>
-            }
-          />
-        </Routes>
-      )}
+              <Modal isOpen={toggleModal} closeModal={closeModal} openModal={openModal} title={'Create Board'} modalHeight={'h-[30vh]'}>
+                <CreateBoard landing={'/'} />
+              </Modal>
+            </div>
+          </Fragment>
+        </div>
+      )}{' '}
     </div>
   );
 };

@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useId } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { v4 as uuidv4 } from 'uuid';
 import _ from 'lodash';
 import { db, useAuthState } from '../firebase/config';
 import { doc, updateDoc, onSnapshot, setDoc } from 'firebase/firestore';
@@ -30,10 +29,9 @@ const CreateBoard = ({ title, landing }) => {
 
   let navigate = useNavigate();
 
-  const createId = uuidv4().slice(0, 8);
-  console.log(createId);
+  const createId = useId();
 
-  useEffect(async () => {
+  useEffect(() => {
     setBoard({
       ...board,
       id: createId,

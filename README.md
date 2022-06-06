@@ -25,4 +25,4 @@ CRUD, Authentication/user account, Form validation, Private/public routes, uploa
 
 ### Future features I want to implement
 
-Messages, Sending pins betweens users, likes, pin Sharing, save content from other sources, blocking, report content and users
+Drag and drop upload, messages, likes, pin sharing, Generate pins from around the web, Social: blocking, report content and users

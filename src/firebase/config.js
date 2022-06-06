@@ -29,19 +29,9 @@ export function signup(email, password) {
   return createUserWithEmailAndPassword(auth, email, password);
 }
 
-export const signin = async (email, password) => {
-  return signInWithEmailAndPassword(auth, email, password)
-    .then((userCredential) => {
-      // Signed in
-      const user = userCredential.user;
-      console.log(user);
-    })
-    .catch((error) => {
-      const errorCode = error.code;
-      const errorMessage = error.message;
-      console.log(errorMessage);
-    });
-};
+export function signin(email, password) {
+  return signInWithEmailAndPassword(auth, email, password);
+}
 
 export function signout() {
   return signOut(auth);
@@ -83,141 +73,142 @@ export const AuthContextProvider = (props) => {
       if (res) {
         setUser(res);
         console.log(res);
-      } else {
-        console.log('user signed out');
-      }
+        // Variables to documents and collections in Firestore database.
 
-      // Variables to documents and collections in Firestore database.
+        const contentCollectionRef = collection(db, 'content');
+        const usersCollectionRef = collection(db, 'public_users');
+        const userFollowingRef = collection(db, 'public_users', `${res?.uid}`, 'following');
+        const userFollowersRef = collection(db, 'public_users', `${res?.uid}`, 'followers');
+        const userSavedContentRef = collection(db, 'public_users', `${res?.uid}`, 'saved_pins');
+        const userSearchedContentRef = collection(db, 'public_users', `${res?.uid}`, 'searches');
+        const userCurrSearchRef = collection(db, 'public_users', `${res?.uid}`, 'currSearchQuery');
 
-      const contentCollectionRef = collection(db, 'content');
-      const usersCollectionRef = collection(db, 'public_users');
-      const userFollowingRef = collection(db, 'public_users', `${res?.uid}`, 'following');
-      const userFollowersRef = collection(db, 'public_users', `${res?.uid}`, 'followers');
-      const userSavedContentRef = collection(db, 'public_users', `${res?.uid}`, 'saved_pins');
-      const userSearchedContentRef = collection(db, 'public_users', `${res?.uid}`, 'searches');
-      const userCurrSearchRef = collection(db, 'public_users', `${res?.uid}`, 'currSearchQuery');
+        //Variables for queries that fetch specific data from documents and collections.
 
-      //Variables for queries that fetch specific data from documents and collections.
+        const q_user = query(usersCollectionRef, where('uid', '==', `${res?.uid}`));
+        const q_user_boards = query(contentCollectionRef, where('author', '==', `${res?.uid}`), where('type', '==', 'board'));
+        const q_user_pins = query(contentCollectionRef, where('author', '==', `${res?.uid}`), where('type', '==', 'pin'));
+        const q_user_following = query(userFollowingRef, where('type', '==', 'following'));
+        const q_user_followers = query(userFollowersRef, where('type', '==', 'followers'));
+        const q_user_saved_pins = query(userSavedContentRef, where('saved', '==', true));
+        const q_pins = query(contentCollectionRef, where('type', '==', 'pin'));
+        const q_boards = query(contentCollectionRef, where('type', '==', 'board'));
+        const q_searches = query(userSearchedContentRef, where('type', '==', 'search'));
+        const q_currsearch = query(userCurrSearchRef, where('type', '==', 'currSearch'));
 
-      const q_user = query(usersCollectionRef, where('uid', '==', `${res?.uid}`));
-      const q_user_boards = query(contentCollectionRef, where('author', '==', `${res?.uid}`), where('type', '==', 'board'));
-      const q_user_pins = query(contentCollectionRef, where('author', '==', `${res?.uid}`), where('type', '==', 'pin'));
-      const q_user_following = query(userFollowingRef, where('type', '==', 'following'));
-      const q_user_followers = query(userFollowersRef, where('type', '==', 'followers'));
-      const q_user_saved_pins = query(userSavedContentRef, where('saved', '==', true));
-      const q_pins = query(contentCollectionRef, where('type', '==', 'pin'));
-      const q_boards = query(contentCollectionRef, where('type', '==', 'board'));
-      const q_searches = query(userSearchedContentRef, where('type', '==', 'search'));
-      const q_currsearch = query(userCurrSearchRef, where('type', '==', 'currSearch'));
-
-      /* 
+        /* 
       
 Data that is fetched and stored to state using Firestore snapshots. onSnapshots method
 fetches live data. 
       
 */
 
-      // Users & Profiles
+        // Users & Profiles
 
-      onSnapshot(usersCollectionRef, (doc) => {
-        const users_data = [];
-        doc.docs.forEach((doc) => {
-          users_data.push(doc.data());
-        });
-        setUsers(users_data);
-      });
-
-      /* Current Profile */
-
-      onSnapshot(q_user, (querySnapshot) => {
-        const user_profile = [];
-        querySnapshot.docs.forEach((doc) => {
-          user_profile.push(doc.data());
-        });
-        setUserProfile(user_profile);
-      });
-
-      onSnapshot(q_user_following, (querySnapshot) => {
-        const user_following = [];
-        querySnapshot.docs.forEach((doc) => {
-          user_following.push(doc.data());
-        });
-        setUserFollowing(user_following.filter((usrs) => usrs.type === 'following'));
-      });
-
-      onSnapshot(q_user_followers, (querySnapshot) => {
-        const user_followers = [];
-        querySnapshot.docs.forEach((doc) => {
-          user_followers.push(doc.data());
+        onSnapshot(usersCollectionRef, (doc) => {
+          const users_data = [];
+          doc.docs.forEach((doc) => {
+            users_data.push(doc.data());
+          });
+          setUsers(users_data);
         });
 
-        setUserFollowers(user_followers);
-      });
+        /* Current Profile */
 
-      /* All Boards */
-
-      onSnapshot(q_boards, (querySnapshot) => {
-        const boards_content = [];
-        querySnapshot.docs.forEach((doc) => {
-          boards_content.push(doc.data());
+        onSnapshot(q_user, (querySnapshot) => {
+          const user_profile = [];
+          querySnapshot.docs.forEach((doc) => {
+            user_profile.push(doc.data());
+          });
+          console.log(user_profile);
+          setUserProfile(user_profile);
         });
-        // console.log(boards_content);
-        setBoards(boards_content);
-      });
 
-      /* Current User's Pins and Boards */
-
-      onSnapshot(q_user_boards, (querySnapshot) => {
-        const user_content = [];
-        querySnapshot?.docs?.forEach((doc) => {
-          user_content?.push(doc?.data());
+        onSnapshot(q_user_following, (querySnapshot) => {
+          const user_following = [];
+          querySnapshot.docs.forEach((doc) => {
+            user_following.push(doc.data());
+          });
+          setUserFollowing(user_following.filter((usrs) => usrs.type === 'following'));
         });
-        setUserBoards(user_content);
-      });
 
-      onSnapshot(q_user_pins, (querySnapshot) => {
-        const user_content = [];
-        querySnapshot?.docs?.forEach((doc) => {
-          user_content?.push(doc?.data());
+        onSnapshot(q_user_followers, (querySnapshot) => {
+          const user_followers = [];
+          querySnapshot.docs.forEach((doc) => {
+            user_followers.push(doc.data());
+          });
+
+          setUserFollowers(user_followers);
         });
-        // console.log(user_content);
-        setUserPins(user_content);
-      });
 
-      onSnapshot(q_user_saved_pins, (querySnapshot) => {
-        const user_saved_pins = [];
-        querySnapshot.docs.forEach((doc) => {
-          user_saved_pins.push(doc.data());
+        /* All Boards */
+
+        onSnapshot(q_boards, (querySnapshot) => {
+          const boards_content = [];
+          querySnapshot.docs.forEach((doc) => {
+            boards_content.push(doc.data());
+          });
+          // console.log(boards_content);
+          setBoards(boards_content);
         });
-        setUserSavedPins(user_saved_pins);
-      });
 
-      onSnapshot(q_searches, (querySnapshot) => {
-        const user_searches = [];
-        querySnapshot.docs.forEach((doc) => {
-          user_searches.push(doc.data());
+        /* Current User's Pins and Boards */
+
+        onSnapshot(q_user_boards, (querySnapshot) => {
+          const user_content = [];
+          querySnapshot?.docs?.forEach((doc) => {
+            user_content?.push(doc?.data());
+          });
+          setUserBoards(user_content);
         });
-        setUserSearches(user_searches);
-      });
 
-      onSnapshot(q_currsearch, (querySnapshot) => {
-        const user_currsearch = [];
-        querySnapshot.docs.forEach((doc) => {
-          user_currsearch.push(doc.data());
+        onSnapshot(q_user_pins, (querySnapshot) => {
+          const user_content = [];
+          querySnapshot?.docs?.forEach((doc) => {
+            user_content?.push(doc?.data());
+          });
+          // console.log(user_content);
+          setUserPins(user_content);
         });
-        setCurrSearch(user_currsearch[0]?.query?.toString());
-      });
 
-      /* Global Content */
-
-      onSnapshot(q_pins, (querySnapshot) => {
-        const pins_content = [];
-        querySnapshot?.docs?.forEach((doc) => {
-          pins_content?.push(doc?.data());
+        onSnapshot(q_user_saved_pins, (querySnapshot) => {
+          const user_saved_pins = [];
+          querySnapshot.docs.forEach((doc) => {
+            user_saved_pins.push(doc.data());
+          });
+          setUserSavedPins(user_saved_pins);
         });
-        // console.log(pins_content);
-        setPins(pins_content);
-      });
+
+        onSnapshot(q_searches, (querySnapshot) => {
+          const user_searches = [];
+          querySnapshot.docs.forEach((doc) => {
+            user_searches.push(doc.data());
+          });
+          setUserSearches(user_searches);
+        });
+
+        onSnapshot(q_currsearch, (querySnapshot) => {
+          const user_currsearch = [];
+          querySnapshot.docs.forEach((doc) => {
+            user_currsearch.push(doc.data());
+          });
+          setCurrSearch(user_currsearch[0]?.query?.toString());
+        });
+
+        /* Global Content */
+
+        onSnapshot(q_pins, (querySnapshot) => {
+          const pins_content = [];
+          querySnapshot?.docs?.forEach((doc) => {
+            pins_content?.push(doc?.data());
+          });
+          // console.log(pins_content);
+          setPins(pins_content);
+        });
+      } else {
+        setUser(null);
+        console.log('no user signed in');
+      }
     });
   }, []);
 

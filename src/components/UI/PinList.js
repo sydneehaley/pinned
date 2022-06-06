@@ -1,8 +1,9 @@
+import React from 'react';
 import Pin from './Pin';
 
-const PinList = ({ pins }) => {
-  const images = pins?.map((pin, i) => {
-    return <Pin key={i} pin={pin} pins={pins} index={i} />;
+const PinList = ({ pins_data }) => {
+  const images = pins_data?.map((pin, i) => {
+    return <Pin key={pin?.id} pin={pin} index={i} />;
   });
 
   return <div class='columns-5 gap-[10px] inline-block '>{images}</div>;

@@ -6,7 +6,8 @@ import SaveToBoard from './SaveToBoard';
 import HeartOutlineIcon from './Icons/HeartOutlineIcon';
 import AddIcon from './Icons/AddIcon';
 
-const Pin = ({ index, pins, pin }) => {
+const Pin = ({ index, pin }) => {
+  const { pins } = useAuthState;
   let location = useLocation();
   const [hover, setHover] = useState(false);
   const { users } = useAuthState();
@@ -25,7 +26,9 @@ const Pin = ({ index, pins, pin }) => {
     setToggleModal(true);
   };
 
-  const closeModal = () => [setToggleModal(false)];
+  const closeModal = () => {
+    setToggleModal(false);
+  };
 
   /* 
 

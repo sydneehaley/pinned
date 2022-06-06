@@ -8,30 +8,32 @@ import BoardHeader from './UI/BoardHeader';
 const Board = () => {
   const { user, boards } = useAuthState();
   const { id } = useParams();
-  const [board, setBoard] = useState({
-    author: '',
-    title: '',
-  });
+  const [loading, setLoading] = useState(true);
+
+  const board = {
+    author: boards?.filter((brd) => brd?.id === id)[0]?.author,
+    description: boards?.filter((brd) => brd?.id === id)[0]?.description,
+    title: boards?.filter((brd) => brd?.id === id)[0]?.title,
+  };
 
   useEffect(() => {
-    setBoard({
-      author: boards?.filter((board) => board.id == id)[0]?.author,
-      title: boards?.filter((board) => board.id == id)[0]?.title,
-    });
+    setTimeout(() => {
+      setLoading(false);
+    }, 1000);
   }, []);
 
   return (
     <div class='w-full flex flex-col items-center mt-[2rem]'>
-      <BoardHeader id={id} boards={boards} user={user} author={board?.author} />
+      <BoardHeader id={id} boards={boards} user={user} author={board?.author} title={board?.title} />
 
-      <PinBoard id={id} title={board?.title} />
+      {loading === true ? <div>Loading...</div> : <PinBoard title={board?.title} />}
     </div>
   );
 };
 
 const PinBoard = ({ title }) => {
   const { pins } = useAuthState();
-  const filtered_pins = pins?.filter((pin) => pin?.board == title);
+  const filtered_pins = pins?.filter((pin) => pin?.board === title);
   console.log(filtered_pins);
 
   return (
@@ -47,7 +49,7 @@ const PinBoard = ({ title }) => {
               <MultiplePinsIcon />
               <span class='ml-[5px]'>{filtered_pins?.length}</span>
             </div>
-            <PinList pins={filtered_pins} />
+            <PinList pins_data={filtered_pins} />
           </div>
         </div>
       )}

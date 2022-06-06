@@ -1,42 +1,28 @@
-import React, { useRef, useState } from "react";
-import { useEffect } from "react";
-import { useDispatch } from "react-redux";
-import { toggleDeletePinModal } from "../store/features/appState";
-import {
-  useLocation,
-  useNavigate,
-  useParams,
-} from "react-router-dom";
-import {
-  doc,
-  onSnapshot,
-  updateDoc,
-  deleteField,
-} from "firebase/firestore";
-import { auth, db, useAuthState } from "../firebase/config";
+import React, { useRef, useState } from 'react';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+
+import { useParams } from 'react-router-dom';
+import { doc, onSnapshot, updateDoc, deleteField } from 'firebase/firestore';
+import { db, useAuthState } from '../firebase/config';
 
 const DeletePinForm = () => {
   const { user } = useAuthState();
   const dispatch = useDispatch();
   const { id } = useParams();
   const [data, setData] = useState();
-  console.log(id);
-  const docRef = doc(
-    db,
-    "users",
-    `${user?.uid}`,
-    "content",
-    "pins"
-  );
-  const globalRef = doc(db, "content", "pins");
+  const [toggleModal, setToggleModal] = useState(true);
+
+  const docRef = doc(db, 'users', `${user?.uid}`, 'content', 'pins');
+  const globalRef = doc(db, 'content', 'pins');
 
   useEffect(() => {
     const unsub = onSnapshot(docRef, (doc) => {
-      console.log("Current data: ", doc?.data());
+      console.log('Current data: ', doc?.data());
       const res = doc?.data();
       console.log(res);
       setData(res);
-      console.log("data fetched");
+      console.log('data fetched');
     });
 
     return unsub;
@@ -56,11 +42,15 @@ const DeletePinForm = () => {
     });
   };
 
+  const handleModalToggle = () => {
+    setToggleModal(!toggleModal);
+  };
+
   const handleOnClick = async (e) => {
     e.preventDefault();
     deleteFromGlobal();
     deleteFromUser();
-    dispatch(toggleDeletePinModal());
+    handleModalToggle();
   };
 
   return (

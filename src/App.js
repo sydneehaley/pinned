@@ -1,8 +1,8 @@
 import React, { useEffect, useState, Fragment } from 'react';
 import { Route, Routes, useLocation, Navigate, Outlet } from 'react-router-dom';
 import _ from 'lodash';
-import Navbar from './components/Navbar';
 import FooterNavbar from './components/FooterNavbar';
+import SignIn from './components/SignIn';
 import Welcome from './components/Welcome';
 import Modal from './components/UI/Modal';
 import CreateBoard from './components/CreateBoard';
@@ -23,11 +23,19 @@ import { useAuthState } from './firebase/config';
 
 // This component protects specific routes from the public.
 
-const ProtectedRoute = ({ children }) => {
+const ProtectedRoute = () => {
   const { pathname } = useLocation();
   const { user } = useAuthState();
+  const [loading, setLoading] = useState(true);
 
-  return user === undefined ? <Navigate to='/signup' state={{ from: pathname }} replace /> : <Outlet />;
+  useEffect(() => {
+    console.log(user);
+    setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+  }, []);
+
+  return user == undefined ? <Navigate to='/signin' state={{ from: pathname }} replace /> : <Outlet />;
 };
 
 const App = () => {
@@ -37,27 +45,18 @@ const App = () => {
   const { user } = useAuthState();
 
   useEffect(() => {
-    console.log(loading);
     console.log('app loading...');
 
-    const emptyUser = user === undefined;
-
-    if (user !== undefined || emptyUser === false) {
-      console.log('data loaded');
-
+    if (user !== undefined || user == undefined) {
       setTimeout(() => {
         setLoading(false);
         console.log('app loaded');
       }, 500);
     }
 
-    if (location !== null) {
-      if (location.pathname == '/signup') {
-        setShowNavbar(false);
-      }
+    if (user == null) {
+      setShowNavbar(false);
     }
-
-    console.log(showNavbar);
   }, [user]);
 
   let location = useLocation();
@@ -91,17 +90,15 @@ view and the search results view.
   return (
     <div>
       {loading === true ? (
-        <div></div>
+        <div>{null}</div>
       ) : (
         <div>
-          <Navbar />
           <Routes location={background || location}>
             <Route path='/signup' element={<Welcome />} />
-
+            <Route path='/signin' element={<SignIn />} />
             {/* {users?.map((user) => (
             <Route exact path={'/' + user.displayName} element={<div>Public profile</div>} />
           ))} */}
-
             <Route path='/*' element={<ProtectedRoute />}>
               <Route path='' element={<Gallery />} />
               <Route path='stories' element={<Stories />} />
@@ -132,19 +129,18 @@ view and the search results view.
               </Route>
             </Routes>
           )}
-          {showNavbar === true && <FooterNavbar />}
 
-          <Fragment>
+          {showNavbar === true && (
             <div>
               <FooterNavbar openModal={openModal} />
-
-              <Modal isOpen={toggleModal} closeModal={closeModal} openModal={openModal} title={'Create Board'} modalHeight={'h-[30vh]'}>
-                <CreateBoard landing={'/'} />
-              </Modal>
             </div>
-          </Fragment>
+          )}
+
+          <Modal isOpen={toggleModal} closeModal={closeModal} openModal={openModal} title={'Create Board'} modalHeight={'h-[30vh]'}>
+            <CreateBoard landing={'/'} />
+          </Modal>
         </div>
-      )}{' '}
+      )}
     </div>
   );
 };

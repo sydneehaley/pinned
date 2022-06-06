@@ -40,7 +40,7 @@ A new state hook is created to store pins data to be displayed.
         </div>
       ) : (
         <Fragment>
-          <PinList pins={filtered_pins} />
+          <PinList pins_data={filtered_pins} />
         </Fragment>
       )}
     </Fragment>

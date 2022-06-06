@@ -1,8 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useSearchParams, createSearchParams, Link, useLocation, generatePath, URLSearchParams } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
 import { useAuthState } from '../firebase/config';
-import { getBackground } from '../store/features/appState';
 
 const SearchResults = () => {
   const location = useLocation();

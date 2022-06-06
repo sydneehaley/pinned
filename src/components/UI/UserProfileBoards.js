@@ -8,7 +8,7 @@ const UserProfileBoards = ({ boards, pins }) => {
         <div class='grid grid-cols-5 gap-[9px]'>
           {boards?.map((board, i) => (
             <div key={i} class='w-full h-[11rem]'>
-              <Link to={`/boards/${board.id}`} style={{ cursor: 'pointer' }}>
+              <Link to={`/boards/${board?.id}`} style={{ cursor: 'pointer' }}>
                 {pins?.filter((img) => img.board === board?.title)?.length === 0 ? (
                   <div key={board.id} class='bg-neutral-200 h-[11rem] rounded-md col-span-1 flex items-center justify-center'>
                     <ImageIcon classes={'w-8 h-8'} fill={'#767676'} />

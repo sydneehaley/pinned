@@ -21,7 +21,7 @@ Current repo includes 100% of app's initial features. Currently testing features
 
 ### Current Features
 
-CRUD, Authentication/user account, Private/public routes, upload images, organize images with user-generated boards, social: user following, followers, and profile, Users can save other users content, account/profile settings
+CRUD, Authentication/user account, Form validation, Private/public routes, upload images, organize images with user-generated boards, social: user following, followers, and profile, save content, account/profile settings
 
 ### Future features I want to implement
 

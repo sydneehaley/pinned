@@ -19,6 +19,8 @@ View demo at: (http://pinned-images-gallery.netlify.app)
 
 Current repo includes 100% of app's initial features. Currently testing features with Cypress. Code cleanup & comments. Completing UI kit in Adobe XD. which will include complete responsive design for mobile, tablet, and desktop.
 
+App's wireframes: https://xd.adobe.com/view/315e49ed-f626-4917-b0b2-3b64d84d6ab6-640d/
+
 ### Current Features
 
 CRUD, Authentication/user account, Form validation, Private/public routes, upload images, organize images with user-generated boards, social: user following, followers, and profile, save content, account/profile settings

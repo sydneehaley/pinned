@@ -19,7 +19,7 @@ View demo at: (http://pinned-images-gallery.netlify.app)
 
 Current repo includes 100% of app's initial features. Currently testing features with Cypress. Code cleanup & comments. Completing UI kit in Adobe XD. which will include complete responsive design for mobile, tablet, and desktop.
 
-App's wireframes: https://xd.adobe.com/view/315e49ed-f626-4917-b0b2-3b64d84d6ab6-640d/
+App's wireframes: https://www.figma.com/file/O3gsLc1PPaj7eGD9Xlkeez/Pinned?node-id=24%3A123
 
 ### Current Features
 

@@ -40,7 +40,6 @@ const ProtectedRoute = () => {
 
 const App = () => {
   const [loading, setLoading] = useState(true);
-  const [showNavbar, setShowNavbar] = useState(true);
   const [toggleModal, setToggleModal] = useState(false);
   const { user } = useAuthState();
 
@@ -52,10 +51,6 @@ const App = () => {
         setLoading(false);
         console.log('app loaded');
       }, 500);
-    }
-
-    if (user == null) {
-      setShowNavbar(false);
     }
   }, [user]);
 
@@ -130,7 +125,7 @@ view and the search results view.
             </Routes>
           )}
 
-          {showNavbar === true && (
+          {user !== undefined && (
             <div>
               <FooterNavbar openModal={openModal} />
             </div>

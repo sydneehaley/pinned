@@ -65,7 +65,7 @@ const Navbar = () => {
 
   const handleSignOut = async () => {
     signout();
-    navigate('/signin');
+    navigate('/signup');
   };
 
   const DropDownMenuButton = () => {
@@ -122,17 +122,17 @@ const Navbar = () => {
                     <div class='flex justify-start'>
                       <div class='w-full'>
                         <div className='relative'>
-                          <div class='absolute w-[3.3rem] flex top-0 h-[3rem] items-center justify-center left-[33px] z-0'>
+                          <div class='absolute w-[3.3rem] flex top-0 h-[3rem] items-center justify-center left-[64px] z-0'>
                             <SearchIcon classes={'w-4 h-4 fill-neutral-500 '} />
                           </div>
-                          <form class='pl-[2rem]' onSubmit={handleOnSubmit}>
+                          <form class='pl-[4rem]' onSubmit={handleOnSubmit}>
                             <input
                               class={`w-[97%]  flex items-center h-12 rounded-full  text-neutral-900 border-0 focus:border-0 focus:ring-0  focus:outline-[6px] focus:outline-solid focus:outline-offset-0 focus:outline-blue-200 font-[500] placeholder:text-[#767676] placeholder: px-[3rem]  ${
                                 toggleSearch === true ? 'bg-neutral-200' : 'bg-neutral-200'
                               }`}
                               value={query}
                               name='query'
-                              onClick={openInputDropdown}
+                              onKeyDown={openInputDropdown}
                               onChange={handleOnChange}
                             />
                           </form>

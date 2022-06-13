@@ -16,7 +16,6 @@ import ChevronRightIcon from './UI/Icons/ChevronRightIcon';
 import DropDownMenu from './UI/DropdownMenu';
 
 export default function PinViewModal({ classes }) {
-  const getQuery = useSelector((state) => state.pingallery.searchParams);
   const { user, pins, users, userFollowing } = useAuthState();
   const { id } = useParams();
   console.log(id);
